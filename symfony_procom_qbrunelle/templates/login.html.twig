@@ -1,0 +1,39 @@
+{% extends 'layout.html.twig' %}
+
+{% block title %}Connexion - PROCOM{% endblock %}
+
+{% block content %}
+<section class="material-half-bg">
+    <div class="cover"></div>
+</section>
+<section class="login-content">
+    <div class="logo">
+      <h1>Procom</h1>
+    </div>
+    <div class="login-box">
+        <form class="login-form" action="index.html">
+            <h3 class="login-head"><i class="fa fa-lg fa-fw fa-user"></i>Connexion</h3>
+            <div class="form-group">
+                <label class="control-label">Email</label>
+                <input class="form-control" type="text" placeholder="Email" autofocus>
+            </div>
+            <div class="form-group">
+                <label class="control-label">Mot de passe</label>
+                <input class="form-control" type="password" placeholder="Mot de passe">
+            </div>
+            <div class="form-group">
+                <div class="utility">
+                    <div class="animated-checkbox">
+                        <label>
+                            <input type="checkbox"><span class="label-text">Se souvenir de moi</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+            <div class="form-group btn-container">
+                <button type="submit" class="btn btn-primary btn-block"><i class="fa fa-sign-in fa-lg fa-fw"></i>CONNEXION</button>
+            </div>
+        </form>
+    </div>
+</section>
+{% endblock %}
