@@ -1,0 +1,84 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Layout | {{ parent() }}{% endblock %}
+
+{% block stylesheets %}
+    <!-- Bootstrap CDN -->
+    <link rel="stylesheet" type="text/css" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <!-- Custom CSS -->
+    <link href="{{ asset('css/main.css') }}" rel="stylesheet" type="text/css">
+{% endblock %}
+
+{% block body %}
+
+    <!-- Navbar -->
+    <header class="app-header"><a class="app-header__logo" href="#">Procom</a>
+        <a class="app-sidebar__toggle" href="#" data-toggle="sidebar" aria-label="Hide Sidebar"></a>
+        <!-- Navbar Right Menu-->
+        <ul class="app-nav">
+            <li class="app-search">
+                <form>
+                    <input class="app-search__input" type="search" placeholder="Recherche">
+                    <button type="submit" class="app-search__button"><i class="fa fa-search"></i></button>
+                </form>
+            </li>
+        </ul>
+    </header>
+
+    <!-- Sidebar menu-->
+    <div class="app-sidebar__overlay" data-toggle="sidebar"></div>
+    <aside class="app-sidebar">
+        <div class="app-sidebar__user">
+            <img class="app-sidebar__user-avatar" src="img/user.jpg" alt="User Image">
+            <div>
+                <p class="app-sidebar__user-name">John Doe</p>
+                <p class="app-sidebar__user-designation">Directeur</p>
+            </div>
+        </div>
+        <ul class="app-menu">
+            <li>
+                <a class="app-menu__item active" href="#">
+                    <i class="app-menu__icon fa fa-dashboard"></i>
+                    <span class="app-menu__label">Tableau de bord</span>
+                </a>
+            </li>
+            <li>
+                <a class="app-menu__item" href="#">
+                    <i class="app-menu__icon fa fa-laptop"></i>
+                    <span class="app-menu__label">Projets</span>
+                </a>
+            </li>
+            <li>
+                <a class="app-menu__item" href="#">
+                    <i class="app-menu__icon fa fa-users"></i>
+                    <span class="app-menu__label">Employés</span>
+                </a>
+            </li>
+            <li>
+                <a class="app-menu__item" href="#">
+                    <i class="app-menu__icon fa fa-book"></i>
+                    <span class="app-menu__label">Métiers</span>
+                </a>
+            </li>
+        </ul>
+    </aside>
+
+    {% block content %}{% endblock %}
+
+    <!-- Footer -->
+    <footer class="main-footer">
+        <p>Copyright &copy; Procom - {{ "now"|date("Y") }}</p>
+    </footer>
+
+    {% block javascripts %}
+        <!-- Pace Min Javascript -->
+        <script src="{{ asset('js/pace.min.js') }}"></script>
+        <!-- Main JavaScript -->
+        <script src="{{ asset('js/main.js') }}"></script>
+
+        <!-- jQuery, Popper, Bootstrap Core Javascript -->
+        <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.6/umd/popper.min.js" integrity="sha384-wHAiFfRlMFy6i5SRaxvfOCifBUQy1xHdJ/yoi7FRNXMRBu5WHdZYu1hA6ZOblgut" crossorigin="anonymous"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.2.1/js/bootstrap.min.js" integrity="sha384-B0UglyR+jN6CkvvICOB2joaf5I4l3gm9GU6Hc1og6Ls7i6U/mkkaduKaBhlAXv9k" crossorigin="anonymous"></script>
+    {% endblock %}
+{% endblock %}
