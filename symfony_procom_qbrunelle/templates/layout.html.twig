@@ -12,7 +12,7 @@
 {% block body %}
 
     <!-- Navbar -->
-    <header class="app-header"><a class="app-header__logo" href="#">Procom</a>
+    <header class="app-header"><a class="app-header__logo" href="{{ path('dashboard') }}">Procom</a>
         <a class="app-sidebar__toggle" href="#" data-toggle="sidebar" aria-label="Hide Sidebar"></a>
         <!-- Navbar Right Menu-->
         <ul class="app-nav">
@@ -37,25 +37,25 @@
         </div>
         <ul class="app-menu">
             <li>
-                <a class="app-menu__item active" href="#">
+                <a class="app-menu__item {{ active.dashboard }}" href="{{ path('dashboard') }}">
                     <i class="app-menu__icon fa fa-dashboard"></i>
                     <span class="app-menu__label">Tableau de bord</span>
                 </a>
             </li>
             <li>
-                <a class="app-menu__item" href="#">
+                <a class="app-menu__item {{ active.projets }}" href="{{ path('projets') }}">
                     <i class="app-menu__icon fa fa-laptop"></i>
                     <span class="app-menu__label">Projets</span>
                 </a>
             </li>
             <li>
-                <a class="app-menu__item" href="#">
+                <a class="app-menu__item {{ active.employes }}" href="{{ path('employes') }}">
                     <i class="app-menu__icon fa fa-users"></i>
                     <span class="app-menu__label">Employés</span>
                 </a>
             </li>
             <li>
-                <a class="app-menu__item" href="#">
+                <a class="app-menu__item {{ active.metiers }}" href="{{ path('metiers') }}">
                     <i class="app-menu__icon fa fa-book"></i>
                     <span class="app-menu__label">Métiers</span>
                 </a>
