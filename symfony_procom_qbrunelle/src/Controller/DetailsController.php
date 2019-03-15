@@ -4,7 +4,6 @@ namespace App\Controller;
 
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
-use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Employe;
 use App\Entity\Projet;
@@ -35,7 +34,7 @@ class DetailsController extends AbstractController
     /**
      * @Route("/projet/{id}", name="projet", requirements={"id" = "\d+"})
      */
-    public function detailsProjet(Request $request, int $id)
+    public function detailsProjet(int $id)
     {
         $projet = $this->projetRepository->find($id);
 

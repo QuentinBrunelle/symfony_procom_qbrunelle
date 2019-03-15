@@ -1,0 +1,26 @@
+{% for projet in projets %}
+    <tr>
+        <td>{{ projet.intitule }}</td>
+        <td>{{ projet.description }}</td>
+        <td>{{ projet.type }}</td>
+        <th>
+            {% if projet.estLivre == 0 %}
+                <span class="badge badge-success">OUI</span>
+            {% else %}
+                <span class="badge badge-danger">NON</span>
+            {% endif %}
+        </th>
+        <td>{{ projet.date | date("d/m/Y") }}</td>
+        <td>
+            <a href="#" class="btn btn-primary btn-sm">
+                <i class="fa fa-eye mr-0"></i>
+            </a>
+            <a href="#" class="btn btn-info btn-sm">
+                <i class="fa fa-pencil mr-0"></i>
+            </a>
+            <a href="#" class="btn btn-danger btn-sm">
+                <i class="fa fa-trash-o mr-0"></i>
+            </a>
+        </td>
+    </tr>
+{% endfor %}

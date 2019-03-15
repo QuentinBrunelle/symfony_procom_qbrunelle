@@ -52,6 +52,7 @@ class DashboardController extends AbstractController
         $five_last_projects = $this->projetRepository->findBy([],['date' => 'DESC'],5);
 
         $active = ["dashboard" => "active", "projets" => "", "employes" => "", "metiers" => "" ];
+
         return $this->render('dashboard/index.html.twig', [
             'nb_employes' => count($this->employeRepository->findAll()),
             'nb_current_projects' => $nb_current_projects,

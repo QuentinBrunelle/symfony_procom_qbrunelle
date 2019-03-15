@@ -29,7 +29,7 @@
     <div class="app-sidebar__overlay" data-toggle="sidebar"></div>
     <aside class="app-sidebar">
         <div class="app-sidebar__user">
-            <img class="app-sidebar__user-avatar" src="img/user.jpg" alt="User Image">
+            <img class="app-sidebar__user-avatar" src="{{ asset('img/user.jpg') }}" alt="User Image">
             <div>
                 <p class="app-sidebar__user-name">John Doe</p>
                 <p class="app-sidebar__user-designation">Directeur</p>
@@ -43,19 +43,19 @@
                 </a>
             </li>
             <li>
-                <a class="app-menu__item {{ active.projets }}" href="{{ path('projets') }}">
+                <a class="app-menu__item {{ active.projets }}" href="{{ path('liste_projets',{'offset': 0 }) }}">
                     <i class="app-menu__icon fa fa-laptop"></i>
                     <span class="app-menu__label">Projets</span>
                 </a>
             </li>
             <li>
-                <a class="app-menu__item {{ active.employes }}" href="{{ path('employes') }}">
+                <a class="app-menu__item {{ active.employes }}" href="{{ path('liste_employes', {'offset': 0}) }}">
                     <i class="app-menu__icon fa fa-users"></i>
                     <span class="app-menu__label">Employés</span>
                 </a>
             </li>
             <li>
-                <a class="app-menu__item {{ active.metiers }}" href="{{ path('metiers') }}">
+                <a class="app-menu__item {{ active.metiers }}" href="{{ path('liste_metiers', {'offset': 0}) }}">
                     <i class="app-menu__icon fa fa-book"></i>
                     <span class="app-menu__label">Métiers</span>
                 </a>
