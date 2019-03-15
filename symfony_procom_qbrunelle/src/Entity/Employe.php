@@ -6,9 +6,11 @@ use Doctrine\ORM\Mapping as ORM;
 
 /**
  * @ORM\Entity(repositoryClass="App\Repository\EmployeRepository")
+ * @ORM\Table(name="employes")
  */
 class Employe
 {
+
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
@@ -40,6 +42,12 @@ class Employe
      * @ORM\Column(type="date")
      */
     private $dateEmbauche;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="App\Entity\Metier", inversedBy="employes", cascade={"persist"})
+     * @ORM\JoinColumn(nullable=false, name="metier_id")
+     */
+    private $metier;
 
     public function getId(): ?int
     {
@@ -102,6 +110,18 @@ class Employe
     public function setDateEmbauche(\DateTimeInterface $dateEmbauche): self
     {
         $this->dateEmbauche = $dateEmbauche;
+
+        return $this;
+    }
+
+    public function getMetier(): ?Metier
+    {
+        return $this->metier;
+    }
+
+    public function setMetier(?Metier $metier): self
+    {
+        $this->metier = $metier;
 
         return $this;
     }

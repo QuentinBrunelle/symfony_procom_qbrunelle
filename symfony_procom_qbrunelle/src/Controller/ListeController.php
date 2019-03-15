@@ -8,7 +8,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Employe;
 use App\Entity\Projet;
-//use App\Entity\Metier;
+use App\Entity\Metier;
 
 /**
  * @Route("/liste", name="liste_")
@@ -30,11 +30,11 @@ class ListeController extends AbstractController
         $this->em = $em;
         $this->employeRepository = $this->em->getRepository(Employe::class);
         $this->projetRepository = $this->em->getRepository(Projet::class);
-        //$this->metierRepository = $this->em->getRepository(Metier::class);
+        $this->metierRepository = $this->em->getRepository(Metier::class);
     }
 
     /**
-     * @Route("/projets/{offset}", name="projets", requirements={"offset" = "\d+"})
+     * @Route("/projets/{offset}", name="projets")
      */
     public function projets(int $offset)
     {
@@ -43,6 +43,14 @@ class ListeController extends AbstractController
         $projets = $this->projetRepository->findBy([],['date' => 'DESC'], 10, $offset);
         $nb_pages = ceil(count($this->projetRepository->findAll()) / 10) ;
         $current_page = ($offset /10) + 1;
+
+        if($current_page == 1){
+            $btns = ['disabled',''];
+        }else if($current_page == $nb_pages){
+            $btns = ['', 'disabled'];
+        }else{
+            $btns = ['', ''];
+        }
 
         $active = ["dashboard" => "", "projets" => "active", "employes" => "", "metiers" => "" ];
 
@@ -53,12 +61,13 @@ class ListeController extends AbstractController
             'current_page' => $current_page,
             'headers' => $headers,
             'active' => $active,
-            'icon' => 'laptop'
+            'icon' => 'laptop',
+            'btns' => $btns
         ]);
     }
 
     /**
-     * @Route("/employes/{offset}", name="employes", requirements={"offset" = "\d+"})
+     * @Route("/employes/{offset}", name="employes")
      */
     public function employes(int $offset)
     {
@@ -67,6 +76,14 @@ class ListeController extends AbstractController
         $employes = $this->employeRepository->findBy([], ['dateEmbauche' => 'DESC'], 10, $offset);
         $nb_pages = ceil(count($this->employeRepository->findAll()) / 10) ;
         $current_page = ($offset /10) + 1;
+
+        if($current_page == 1){
+            $btns = ['disabled',''];
+        }else if($current_page == $nb_pages){
+            $btns = ['', 'disabled'];
+        }else{
+            $btns = ['', ''];
+        }
 
         $active = ["dashboard" => "", "projets" => "", "employes" => "active", "metiers" => "" ];
 
@@ -77,7 +94,8 @@ class ListeController extends AbstractController
             'current_page' => $current_page,
             'headers' => $headers,
             'active' => $active,
-            'icon' => 'users'
+            'icon' => 'users',
+            'btns' => $btns
         ]);
     }
 
@@ -86,15 +104,22 @@ class ListeController extends AbstractController
      */
     public function metiers()
     {
-        $active = ["dashboard" => "", "projets" => "", "employes" => "", "metiers" => "active" ];
+
         $headers = ["Nom"];
+
+        $metiers = $this->metierRepository->findAll();
+
+        $active = ["dashboard" => "", "projets" => "", "employes" => "", "metiers" => "active" ];
 
         return $this->render('dashboard/list.html.twig', [
             'type_liste' => "metier",
-            'items' => '',
+            'items' => $metiers,
+            'nb_pages' => 1,
+            'current_page' => 1,
             'headers' => $headers,
             'active' => $active,
-            'icon' => 'book'
+            'icon' => 'book',
+            'btns' => ['disabled', 'disabled']
         ]);
     }
 }

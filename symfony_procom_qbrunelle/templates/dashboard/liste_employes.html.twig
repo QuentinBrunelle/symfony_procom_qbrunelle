@@ -2,7 +2,7 @@
     <tr>
         <td>{{ employe.prenom | capitalize ~ ' ' ~ employe.nom | upper }}</td>
         <td>{{ employe.email }}</td>
-        <td>{{ employe.email }}</td> <!-- Changer par métier plus tard -->
+        <td>{{ employe.metier.nom }}</td>
         <td>{{ employe.coutJournalier ~ '€'}}</td>
         <td>{{ employe.dateEmbauche | date('l Y', 'Europe/Paris') }}</td>
         <td>

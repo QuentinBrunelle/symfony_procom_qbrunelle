@@ -6,6 +6,7 @@ use Doctrine\Bundle\FixturesBundle\Fixture;
 use Doctrine\Common\Persistence\ObjectManager;
 use App\Entity\Employe;
 use App\Entity\Projet;
+use App\Entity\Metier;
 
 class AppFixtures extends Fixture
 {
@@ -29,17 +30,21 @@ class AppFixtures extends Fixture
         $prenoms = ["Quentin", "Thibaut", "Kevin", "Balou", "Manon", "Lara", "Serge", "Amélie", "Marine", "Stéphanie"];
         $coutJournalier = [50.64, 65.89, 74.13, 49.63, 95.65, 84.00, 89.64, 49.68];
 
-        for($i = 0; $i < 25; $i++){
+        $metiers_string = ["Web designer", "Manager SEO", "Manager Marketing", "Chef de projet", "Développeur Front-End", "Intégrateur", "Développeur Back-end"];
+        $metiers = [];
+        for($i = 0 ; $i < count($metiers_string) ; $i++){
+            array_push($metiers,(new Metier())->setNom($metiers_string[$i]));
+        }
 
-            //$random_date = mt_rand(1262055681,1262055681);
-            //$date = date("d/m/Y",$random_date);
+        for($i = 0; $i < 25; $i++){
 
             $employe = (new Employe())
                 ->setNom($noms[mt_rand(0,9)])
-                ->setPrenom($prenoms[mt_rand(0,9)]);
+                ->setPrenom($prenoms[mt_rand(0,9)])
+                ->setMetier($metiers[mt_rand(0,6)]);
 
             $employe
-                ->setEmail($employe->getPrenom().".".$employe->getNom()."@gmail.com")
+                ->setEmail(mb_strtolower($employe->getPrenom()).'.'.mb_strtolower($employe->getNom()).'@gmail.com')
                 ->setCoutJournalier($coutJournalier[mt_rand(0, 7)])
                 ->setDateEmbauche(new \DateTime("now"));
 
