@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 
 /**
@@ -53,6 +55,16 @@ class Employe
      * @ORM\Column(type="boolean")
      */
     private $archivage;
+
+    /**
+     * @ORM\ManyToMany(targetEntity="App\Entity\TempsDeProduction", mappedBy="employe")
+     */
+    private $tempsDeProductions;
+
+    public function __construct()
+    {
+        $this->tempsDeProductions = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -139,6 +151,34 @@ class Employe
     public function setArchivage(bool $archivage): self
     {
         $this->archivage = $archivage;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|TempsDeProduction[]
+     */
+    public function getTempsDeProductions(): Collection
+    {
+        return $this->tempsDeProductions;
+    }
+
+    public function addTempsDeProduction(TempsDeProduction $tempsDeProduction): self
+    {
+        if (!$this->tempsDeProductions->contains($tempsDeProduction)) {
+            $this->tempsDeProductions[] = $tempsDeProduction;
+            $tempsDeProduction->addEmploye($this);
+        }
+
+        return $this;
+    }
+
+    public function removeTempsDeProduction(TempsDeProduction $tempsDeProduction): self
+    {
+        if ($this->tempsDeProductions->contains($tempsDeProduction)) {
+            $this->tempsDeProductions->removeElement($tempsDeProduction);
+            $tempsDeProduction->removeEmploye($this);
+        }
 
         return $this;
     }

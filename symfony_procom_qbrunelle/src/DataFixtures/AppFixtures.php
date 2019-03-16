@@ -7,6 +7,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use App\Entity\Employe;
 use App\Entity\Projet;
 use App\Entity\Metier;
+use App\Entity\TempsDeProduction;
 
 class AppFixtures extends Fixture
 {
@@ -19,12 +20,12 @@ class AppFixtures extends Fixture
     {
         $this->manager = $manager;
 
-        $this->loadEmployes();
-
-        $this->loadProjets();
+        $this->loadEntities();
     }
 
-    private function loadEmployes(){
+    private function loadEntities(){
+
+        // Paramètres Employés
 
         $noms = ["O'brien", "Davidson", "Denis", "Dupond", "Moore", "Rowland", "Travis", "Henson", "Higgins", "Lucas"];
         $prenoms = ["Quentin", "Thibaut", "Kevin", "Balou", "Manon", "Lara", "Serge", "Amélie", "Marine", "Stéphanie"];
@@ -36,8 +37,14 @@ class AppFixtures extends Fixture
             array_push($metiers,(new Metier())->setNom($metiers_string[$i]));
         }
 
+        // Paramètres Projets
+
+        $type = ['Capex','Opex'];
+
+        // Création des Entités
         for($i = 0; $i < 25; $i++){
 
+            // Création d'un employé
             $employe = (new Employe())
                 ->setNom($noms[mt_rand(0,9)])
                 ->setPrenom($prenoms[mt_rand(0,9)])
@@ -50,18 +57,8 @@ class AppFixtures extends Fixture
                 ->setDateEmbauche(new \DateTime("now"));
 
             $this->manager->persist($employe);
-        }
 
-        $this->manager->flush();
-    }
-
-    private function loadProjets(){
-
-        $type = ['Capex','Opex'];
-
-
-        for($i = 0; $i < 25; $i++){
-
+            // Création d'un projet
             $projet = (new Projet())
                 ->setIntitule("Projet n°".$i)
                 ->setDescription('Description du projet n°'.$i)
@@ -69,6 +66,16 @@ class AppFixtures extends Fixture
                 ->setEstLivre($this->randomBool());
 
             $this->manager->persist($projet);
+
+            $tempsDeProduction = (new TempsDeProduction())
+                ->setDuree(mt_rand(0,16));
+
+            $tempsDeProduction
+                ->setCoutTotal($employe->getCoutJournalier() * $tempsDeProduction->getDuree())
+                ->addEmploye($employe)
+                ->addProjet($projet);
+
+            $this->manager->persist($tempsDeProduction);
         }
 
         $this->manager->flush();
