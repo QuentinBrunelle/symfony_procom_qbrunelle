@@ -49,6 +49,11 @@ class Employe
      */
     private $metier;
 
+    /**
+     * @ORM\Column(type="boolean")
+     */
+    private $archivage;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -122,6 +127,18 @@ class Employe
     public function setMetier(?Metier $metier): self
     {
         $this->metier = $metier;
+
+        return $this;
+    }
+
+    public function getArchivage(): ?bool
+    {
+        return $this->archivage;
+    }
+
+    public function setArchivage(bool $archivage): self
+    {
+        $this->archivage = $archivage;
 
         return $this;
     }

@@ -122,4 +122,19 @@ class ListeController extends AbstractController
             'btns' => ['disabled', 'disabled']
         ]);
     }
+
+    /**
+     * @Route("/employe/{id}", name="suppression_employe", requirements={"id" = "\d+"})
+     */
+    public function suppressionEmploye(int $id)
+    {
+        $employe = $this->employeRepository->find($id);
+
+        $active = ["dashboard" => "", "projets" => "", "employes" => "active", "metiers" => "" ];
+
+        return $this->render('dashboard/form.html.twig', [
+            'entity' => $employe,
+            'active' => $active
+        ]);
+    }
 }

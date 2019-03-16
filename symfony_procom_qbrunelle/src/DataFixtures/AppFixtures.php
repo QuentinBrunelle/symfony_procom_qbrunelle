@@ -41,7 +41,8 @@ class AppFixtures extends Fixture
             $employe = (new Employe())
                 ->setNom($noms[mt_rand(0,9)])
                 ->setPrenom($prenoms[mt_rand(0,9)])
-                ->setMetier($metiers[mt_rand(0,6)]);
+                ->setMetier($metiers[mt_rand(0,6)])
+                ->setArchivage($this->randomBool());
 
             $employe
                 ->setEmail(mb_strtolower($employe->getPrenom()).'.'.mb_strtolower($employe->getNom()).'@gmail.com')

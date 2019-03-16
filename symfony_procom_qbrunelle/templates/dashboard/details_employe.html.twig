@@ -1,0 +1,24 @@
+<tr>
+    <th>Prénom</td>
+    <td>{{ employe.prenom }}</td>
+</tr>
+<tr>
+    <th>Nom</td>
+    <td>{{ employe.nom | upper }}</td>
+</tr>
+<tr>
+    <th>Email</td>
+    <td>{{ employe.email }}</td>
+</tr>
+<tr>
+    <th>Métier</td>
+    <td>{{ employe.metier.nom }}</td>
+</tr>
+<tr>
+    <th>Coût journalier</td>
+    <td>{{ employe.coutJournalier }} €</td>
+</tr>
+<tr>
+    <th>Date d'embauche</td>
+    <td>{{ employe.dateEmbauche | date('d l Y', "Europe/Paris") }}</td>
+</tr>
