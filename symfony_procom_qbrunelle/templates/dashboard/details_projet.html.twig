@@ -1,24 +1,34 @@
 <tr>
-    <th>Prénom</td>
-    <td>Jack</td>
+    <th>Intitulé</td>
+    <td>{{ projet.intitule }}</td>
 </tr>
 <tr>
-    <th>Nom</td>
-    <td>FROST</td>
+    <th>Description</td>
+    <td>{{ projet.description }}</td>
 </tr>
 <tr>
-    <th>Email</td>
-    <td>jfrost@procom.com</td>
+    <th>Type</td>
+    <td>{{ projet.type }}</td>
 </tr>
 <tr>
-    <th>Métier</td>
-    <td>Web developer</td>
+    <th>Est livré</td>
+    <td>
+        {% if projet.estLivre == 0 %}
+            <span class="badge badge-success">OUI</span>
+        {% else %}
+            <span class="badge badge-danger">NON</span>
+        {% endif %}
+    </td>
 </tr>
 <tr>
-    <th>Coût journalier</td>
-    <td>200 €</td>
+    <th>Date de création</td>
+    <td>{{ projet.date | date("d/m/Y") }}</td>
 </tr>
 <tr>
-    <th>Date d'embauche</td>
-    <td>1 mai 2018</td>
+    <th>Coût total de production</td>
+    <td>550 €</td>
+</tr>
+<tr>
+    <th>Employés affectés</td>
+    <td>15</td>
 </tr>

@@ -137,4 +137,19 @@ class ListeController extends AbstractController
             'active' => $active
         ]);
     }
+
+    /**
+     * @Route("/projet/{id}", name="suppression_projet", requirements={"id" = "\d+"})
+     */
+    public function suppressionProjet(int $id)
+    {
+        $projet = $this->projetRepository->find($id);
+
+        $active = ["dashboard" => "", "projets" => "active", "employes" => "", "metiers" => "" ];
+
+        return $this->render('dashboard/form.html.twig', [
+            'entity' => $projet,
+            'active' => $active
+        ]);
+    }
 }

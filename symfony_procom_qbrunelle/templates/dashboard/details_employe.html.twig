@@ -20,5 +20,5 @@
 </tr>
 <tr>
     <th>Date d'embauche</td>
-    <td>{{ employe.dateEmbauche | date('d l Y', "Europe/Paris") }}</td>
+    <td>{{ employe.dateEmbauche | localizeddate('none', 'none', null, null, 'd MMMM Y') }}</td>
 </tr>

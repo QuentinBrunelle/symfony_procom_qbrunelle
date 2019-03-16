@@ -46,4 +46,19 @@ class FormController extends AbstractController
             'active' => $active
         ]);
     }
+
+    /**
+     * @Route("/projet/{id}", name="modification_projet", requirements={"id" = "\d+"})
+     */
+    public function modificationProjet(int $id)
+    {
+        $projet = $this->projetRepository->find($id);
+
+        $active = ["dashboard" => "", "projets" => "active", "employes" => "", "metiers" => "" ];
+
+        return $this->render('dashboard/form.html.twig', [
+            'entity' => $projet,
+            'active' => $active
+        ]);
+    }
 }

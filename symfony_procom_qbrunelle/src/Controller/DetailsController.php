@@ -38,27 +38,35 @@ class DetailsController extends AbstractController
     public function detailsProjet(int $id)
     {
         $projet = $this->projetRepository->find($id);
+        $employes = $this->employeRepository->findBy(['archivage' => 0]);
 
         $active = ["dashboard" => "", "projets" => "active", "employes" => "", "metiers" => "" ];
 
         return $this->render('dashboard/detail.html.twig', [
+            'type_detail' => 'projet',
             'entity' => $projet,
+            'items' => $employes,
+            'erreur_btn' => false,
             'active' => $active
         ]);
     }
 
     /**
-     * @Route("/employe/{id}", name="employe", requirements={"id" = "\d+"})
+     * @Route("/employe/{id}/{erreur}", name="employe", requirements={"id" = "\d+"})
      */
-    public function detailsEmploye(int $id)
+    public function detailsEmploye(int $id, bool $erreur = false)
     {
+
         $employe = $this->employeRepository->find($id);
+        $projets = $this->projetRepository->findAll();
 
         $active = ["dashboard" => "", "projets" => "", "employes" => "active", "metiers" => "" ];
 
         return $this->render('dashboard/detail.html.twig', [
             'type_detail' => 'employe',
             'entity' => $employe,
+            'items' => $projets,
+            'erreur_btn' => $erreur,
             'active' => $active,
         ]);
     }

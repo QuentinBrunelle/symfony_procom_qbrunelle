@@ -10,7 +10,7 @@
         <td>{{ employe.email }}</td>
         <td>{{ employe.metier.nom }}</td>
         <td>{{ employe.coutJournalier ~ '€'}}</td>
-        <td>{{ employe.dateEmbauche | date('l Y', 'Europe/Paris') }}</td>
+        <td>{{ employe.dateEmbauche | localizeddate('none', 'none', null, null, 'MMMM Y') | capitalize }}</td>
         <td>
             <a href="{{ path('details_employe',{'id': employe.id}) }}" class="btn btn-primary btn-sm">
                 <i class="fa fa-eye mr-0"></i>
