@@ -1,19 +1,19 @@
 {% extends 'layout.html.twig' %}
 
-{% block title %}{{ type_liste | capitalize ~ "s"  }} - PROCOM{% endblock %}
+{% block title %}{{ chest.title }} - PROCOM{% endblock %}
 
 {% block content %}
 
 <main class="app-content">
     <div class="app-title">
         <div>
-            <h1><i class="fa fa-{{ icon }}"></i>&nbsp;{{ type_liste | capitalize ~ "s"  }}</h1>
+            <h1><i class="fa fa-{{ chest.icon }}"></i>&nbsp;{{ chest.title  }}</h1>
         </div>
         <ul class="app-breadcrumb breadcrumb">
             <li class="breadcrumb-item">
                 <a href="#"><i class="fa fa-home fa-lg"></i></a>
             </li>
-            <li class="breadcrumb-item">{{ type_liste | capitalize ~ "s"  }}</li>
+            <li class="breadcrumb-item">{{ chest.title  }}</li>
         </ul>
     </div>
     <div class="tile pb-5">
@@ -22,7 +22,7 @@
             <table class="table table-striped table-hover">
                 <thead>
                     <tr>
-                        {% for header in headers %}
+                        {% for header in chest.headers %}
                             <th>{{ header }}</th>
                         {% endfor %}
                         <th></th>

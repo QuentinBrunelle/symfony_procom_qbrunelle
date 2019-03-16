@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Employe;
 use App\Entity\Projet;
 use App\Entity\Metier;
+use App\Entity\TempsProductionEmployeProjet;
 
 /**
  * @Route("/details", name="details_")
@@ -22,6 +23,7 @@ class DetailsController extends AbstractController
     private $employeRepository;
     private $projetRepository;
     private $metierRepository;
+    private $tempsDeProductionRepository;
 
 
     public function __construct(EntityManagerInterface $em)
@@ -30,6 +32,7 @@ class DetailsController extends AbstractController
         $this->employeRepository = $this->em->getRepository(Employe::class);
         $this->projetRepository = $this->em->getRepository(Projet::class);
         $this->metierRepository = $this->em->getRepository(Metier::class);
+        $this->tempsDeProductionRepository = $this->em->getRepository(TempsProductionEmployeProjet::class);
     }
 
     /**
@@ -40,14 +43,23 @@ class DetailsController extends AbstractController
         $projet = $this->projetRepository->find($id);
         $employes = $this->employeRepository->findBy(['archivage' => 0]);
 
+        $historique = $this->tempsDeProductionRepository->findBy(['projet' => $id]);
+
         $active = ["dashboard" => "", "projets" => "active", "employes" => "", "metiers" => "" ];
+
+        $chest = [
+            'title' => $projet->getIntitule(),
+            'icon' => 'laptop',
+            'active' => ["dashboard" => "", "projets" => "active", "employes" => "", "metiers" => "" ]
+        ];
 
         return $this->render('dashboard/detail.html.twig', [
             'type_detail' => 'projet',
             'entity' => $projet,
             'items' => $employes,
+            'historiqueProduction' => $historique,
             'erreur_btn' => false,
-            'active' => $active
+            'chest' => $chest
         ]);
     }
 
@@ -60,14 +72,24 @@ class DetailsController extends AbstractController
         $employe = $this->employeRepository->find($id);
         $projets = $this->projetRepository->findAll();
 
+        $historique = $this->tempsDeProductionRepository->findBy(['employe' => $id]);
+
         $active = ["dashboard" => "", "projets" => "", "employes" => "active", "metiers" => "" ];
+
+        $chest = [
+            'title' => $employe->getPrenom().' '.strtoupper($employe->getNom()),
+            'icon' => 'users',
+            'active' => ["dashboard" => "", "projets" => "", "employes" => "active", "metiers" => "" ]
+        ];
 
         return $this->render('dashboard/detail.html.twig', [
             'type_detail' => 'employe',
             'entity' => $employe,
             'items' => $projets,
+            'historiqueProduction' => $historique,
             'erreur_btn' => $erreur,
             'active' => $active,
+            'chest' => $chest
         ]);
     }
 

@@ -7,7 +7,7 @@ use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Employe;
 use App\Entity\Projet;
-//use App\Entity\Metier;
+use App\Entity\TempsProductionEmployeProjet;
 
 class DashboardController extends AbstractController
 {
@@ -18,7 +18,7 @@ class DashboardController extends AbstractController
 
     private $employeRepository;
     private $projetRepository;
-    private $metierRepository;
+    private $tempsDeProductionRepository;
 
 
     public function __construct(EntityManagerInterface $em)
@@ -26,7 +26,7 @@ class DashboardController extends AbstractController
         $this->em = $em;
         $this->employeRepository = $this->em->getRepository(Employe::class);
         $this->projetRepository = $this->em->getRepository(Projet::class);
-        //$this->metierRepository = $this->em->getRepository(Metier::class);
+        $this->tempsDeProductionRepository = $this->em->getRepository(TempsProductionEmployeProjet::class);
     }
 
     /**
@@ -34,27 +34,67 @@ class DashboardController extends AbstractController
      */
     public function index()
     {
-        $projets = $this->projetRepository->findAll();
-        $nb_total_projets = count($projets);
-        $production_days  = 251; // A modifier
+        // Projets en cours et projets livrés (+ taux de livraison)
+
+        $nb_total_projets = count($this->projetRepository->findAll());
+        $nb_current_projects = count($this->projetRepository->findBy(['estLivre' => 0]));
+        $nb_delivered_projects = $nb_total_projets - $nb_current_projects;
+        $pourcentage_delivered = ($nb_delivered_projects / $nb_total_projets)* 100;
+
+
+        // Rentabilité
 
         $nb_capex = count($this->projetRepository->findBy(['type' => "Capex"]));
         $nb_opex = count($this->projetRepository->findBy(['type' => "Opex"]));
         $pourcentage_capex = ($nb_capex / $nb_total_projets)* 100;
 
-        $nb_current_projects = count($this->projetRepository->findBy(['estLivre' => 0]));
-        $nb_delivered_projects = count($this->projetRepository->findBy(['estLivre' => 1]));
-        $pourcentage_delivered = ($nb_delivered_projects / $nb_total_projets)* 100;
+        // Top Employé
 
+        $employes = $this->employeRepository->findAll();
+
+        $max = 0;
+        $top_employe = null;
+
+        foreach ($employes as $employe){
+            $duree = $this->tempsDeProductionRepository->findTopEmploye($employe->getId());
+            $cout = $duree[0]['somme'] * $employe->getCoutJournalier();
+            if($max < $cout){
+                $max = $cout;
+                $top_employe = $employe;
+            }
+        }
+
+        $top = [
+            'coutTotal' => $max,
+            'employe' => $top_employe
+        ];
+
+        // Jours de production
+
+        $production_days = 0;
+        $historique = $this->tempsDeProductionRepository->findAll();
+
+        for($i = 0; $i < sizeof($historique); $i++){
+            $production_days += $historique[$i]->getDuree();
+        }
 
         // 5  derniers projets
 
         $five_last_projects = $this->projetRepository->findBy([],['date' => 'DESC'],5);
+        $five_projects = [];
+        foreach($five_last_projects as $projet){
+            $cout = $this->tempsDeProductionRepository->findCoutTotalProjet($projet->getId());
+            $currentProject = [$projet, $cout[0]['cout']];
+            array_push($five_projects, $currentProject);
+        }
 
-        $active = ["dashboard" => "active", "projets" => "", "employes" => "", "metiers" => "" ];
+        $chest = [
+            'title' => 'Dashboard',
+            'active' => ["dashboard" => "active", "projets" => "", "employes" => "", "metiers" => "" ]
+        ];
 
         return $this->render('dashboard/index.html.twig', [
-            'nb_employes' => count($this->employeRepository->findAll()),
+            'nb_employes' => count($employes),
             'nb_current_projects' => $nb_current_projects,
             'nb_delivered_projects' => $nb_delivered_projects,
             'pourcentage_delivered' => $pourcentage_delivered,
@@ -62,8 +102,9 @@ class DashboardController extends AbstractController
             'nb_capex' => $nb_capex,
             'nb_opex' => $nb_opex,
             'pourcentage_capex' => $pourcentage_capex,
-            'five_last_projects' => $five_last_projects,
-            'active' => $active
+            'five_projects' => $five_projects,
+            'top' => $top,
+            'chest' => $chest
         ]);
     }
 

@@ -38,8 +38,6 @@ class ListeController extends AbstractController
      */
     public function projets(int $offset)
     {
-        $headers = ["Intitulé", "Description", "Type", "Est livré", "Date de création"];
-
         $projets = $this->projetRepository->findBy([],['date' => 'DESC'], 10, $offset);
         $nb_pages = ceil(count($this->projetRepository->findAll()) / 10) ;
         $current_page = ($offset /10) + 1;
@@ -52,17 +50,20 @@ class ListeController extends AbstractController
             $btns = ['', ''];
         }
 
-        $active = ["dashboard" => "", "projets" => "active", "employes" => "", "metiers" => "" ];
+        $chest = [
+            'title' => 'Projets',
+            'icon' => 'laptop',
+            'active' => ["dashboard" => "", "projets" => "active", "employes" => "", "metiers" => "" ],
+            'headers' => ["Intitulé", "Description", "Type", "Est livré", "Date de création"],
+        ];
 
         return $this->render('dashboard/list.html.twig', [
             'type_liste' => 'projet',
             'items' => $projets,
             'nb_pages' => $nb_pages,
             'current_page' => $current_page,
-            'headers' => $headers,
-            'active' => $active,
-            'icon' => 'laptop',
-            'btns' => $btns
+            'btns' => $btns,
+            'chest' => $chest
         ]);
     }
 
@@ -71,8 +72,6 @@ class ListeController extends AbstractController
      */
     public function employes(int $offset)
     {
-        $headers = ["Nom", "Email", "Métier", "Coût journalier", "Date d'embauche"];
-
         $employes = $this->employeRepository->findBy([], ['dateEmbauche' => 'DESC'], 10, $offset);
         $nb_pages = ceil(count($this->employeRepository->findAll()) / 10) ;
         $current_page = ($offset /10) + 1;
@@ -85,17 +84,20 @@ class ListeController extends AbstractController
             $btns = ['', ''];
         }
 
-        $active = ["dashboard" => "", "projets" => "", "employes" => "active", "metiers" => "" ];
+        $chest = [
+            'title' => 'Employés',
+            'icon' => 'users',
+            'active' => ["dashboard" => "", "projets" => "", "employes" => "active", "metiers" => "" ],
+            'headers' => ["Nom", "Email", "Métier", "Coût journalier", "Date d'embauche"]
+        ];
 
         return $this->render('dashboard/list.html.twig', [
             'type_liste' => 'employe',
             'items' => $employes,
             'nb_pages' => $nb_pages,
             'current_page' => $current_page,
-            'headers' => $headers,
-            'active' => $active,
-            'icon' => 'users',
-            'btns' => $btns
+            'btns' => $btns,
+            'chest' => $chest
         ]);
     }
 
@@ -104,22 +106,21 @@ class ListeController extends AbstractController
      */
     public function metiers()
     {
-
-        $headers = ["Nom"];
-
         $metiers = $this->metierRepository->findAll();
 
-        $active = ["dashboard" => "", "projets" => "", "employes" => "", "metiers" => "active" ];
-
+        $chest = [
+            'title' => 'Métiers',
+            'icon' => 'book',
+            'active' => ["dashboard" => "", "projets" => "", "employes" => "", "metiers" => "active" ],
+            'headers' => ["Nom"]
+        ];
         return $this->render('dashboard/list.html.twig', [
             'type_liste' => "metier",
             'items' => $metiers,
             'nb_pages' => 1,
             'current_page' => 1,
-            'headers' => $headers,
-            'active' => $active,
-            'icon' => 'book',
-            'btns' => ['disabled', 'disabled']
+            'btns' => ['disabled', 'disabled'],
+            'chest' => $chest
         ]);
     }
 

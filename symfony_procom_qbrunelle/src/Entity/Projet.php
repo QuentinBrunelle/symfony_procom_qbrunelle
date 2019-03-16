@@ -45,14 +45,14 @@ class Projet
     private $date;
 
     /**
-     * @ORM\ManyToMany(targetEntity="App\Entity\TempsDeProduction", mappedBy="projet")
+     * @ORM\OneToMany(targetEntity="App\Entity\TempsProductionEmployeProjet", mappedBy="projet", orphanRemoval=true)
      */
-    private $tempsDeProductions;
+    private $tempsProductionProjet;
 
     public function __construct()
     {
         $this->date = new \DateTime();
-        $this->tempsDeProductions = new ArrayCollection();
+        $this->tempsProductionProjet = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -121,28 +121,31 @@ class Projet
     }
 
     /**
-     * @return Collection|TempsDeProduction[]
+     * @return Collection|TempsProductionEmployeProjet[]
      */
-    public function getTempsDeProductions(): Collection
+    public function getTempsProductionProjet(): Collection
     {
-        return $this->tempsDeProductions;
+        return $this->tempsProductionProjet;
     }
 
-    public function addTempsDeProduction(TempsDeProduction $tempsDeProduction): self
+    public function addTempsProductionProjet(TempsProductionEmployeProjet $tempsProductionProjet): self
     {
-        if (!$this->tempsDeProductions->contains($tempsDeProduction)) {
-            $this->tempsDeProductions[] = $tempsDeProduction;
-            $tempsDeProduction->addProjet($this);
+        if (!$this->tempsProductionProjet->contains($tempsProductionProjet)) {
+            $this->tempsProductionProjet[] = $tempsProductionProjet;
+            $tempsProductionProjet->setProjet($this);
         }
 
         return $this;
     }
 
-    public function removeTempsDeProduction(TempsDeProduction $tempsDeProduction): self
+    public function removeTempsProductionProjet(TempsProductionEmployeProjet $tempsProductionProjet): self
     {
-        if ($this->tempsDeProductions->contains($tempsDeProduction)) {
-            $this->tempsDeProductions->removeElement($tempsDeProduction);
-            $tempsDeProduction->removeProjet($this);
+        if ($this->tempsProductionProjet->contains($tempsProductionProjet)) {
+            $this->tempsProductionProjet->removeElement($tempsProductionProjet);
+            // set the owning side to null (unless already changed)
+            if ($tempsProductionProjet->getProjet() === $this) {
+                $tempsProductionProjet->setProjet(null);
+            }
         }
 
         return $this;

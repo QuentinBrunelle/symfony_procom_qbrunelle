@@ -7,7 +7,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use App\Entity\Employe;
 use App\Entity\Projet;
 use App\Entity\Metier;
-use App\Entity\TempsDeProduction;
+use App\Entity\TempsProductionEmployeProjet;
 
 class AppFixtures extends Fixture
 {
@@ -67,13 +67,13 @@ class AppFixtures extends Fixture
 
             $this->manager->persist($projet);
 
-            $tempsDeProduction = (new TempsDeProduction())
-                ->setDuree(mt_rand(0,16));
+            $tempsDeProduction = (new TempsProductionEmployeProjet())
+                ->setDuree(mt_rand(1,16));
 
             $tempsDeProduction
                 ->setCoutTotal($employe->getCoutJournalier() * $tempsDeProduction->getDuree())
-                ->addEmploye($employe)
-                ->addProjet($projet);
+                ->setEmploye($employe)
+                ->setProjet($projet);
 
             $this->manager->persist($tempsDeProduction);
         }

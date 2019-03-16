@@ -1,5 +1,7 @@
 {% extends 'layout.html.twig' %}
 
+{% block title %} {{ chest.title }} - PROCOM{% endblock %}
+
 {% block content %}
 
 <main class="app-content">
@@ -81,17 +83,17 @@
                             <div class="text-center">
                                 <img src="img/ui-zac.jpg" class="rounded-circle" width="58">
                                 <p class="mt-2">
-                                    <strong>Zac Producteur</strong>
+                                    <strong>{{ top.employe.prenom | capitalize ~ ' ' ~ top.employe.nom | upper }}</strong>
                                 </p>
                             </div>
                             <div class="row">
                                 <div class="col-md-6">
                                     <p class="small mt">EMPLOYE DEPUIS</p>
-                                    <p>2012</p>
+                                    <p>{{ top.employe.dateEmbauche | date('Y') }}</p>
                                 </div>
                                 <div class="col-md-6">
                                     <p class="small mt">TOTAL DEPENSE</p>
-                                    <p>34 567 €</p>
+                                    <p>{{ top.coutTotal }} €</p>
                                 </div>
                             </div>
                         </div>
@@ -111,16 +113,16 @@
                         </tr>
                     </thead>
                     <tbody>
-                    {% for projet in five_last_projects %}
+                    {% for projet in five_projects %}
                         <tr>
                             <th>
-                                <a href="{{ path('details_projet',{'id': projet.id}) }}">{{ projet.intitule }}</a>
+                                <a href="{{ path('details_projet',{'id': projet[0].id}) }}">{{ projet[0].intitule }}</a>
                             </th>
-                            <th>{{ projet.type }}</th>
-                            <th>{{ projet.date | date("d/m/Y") }}</th>
-                            <th>3 200 €</th>
+                            <th>{{ projet[0].type }}</th>
+                            <th>{{ projet[0].date | date("d/m/Y") }}</th>
+                            <th>{{ projet[1] }} €</th>
                             <th>
-                                {% if projet.estLivre == 0 %}
+                                {% if projet[0].estLivre == 0 %}
                                     <span class="badge badge-success">OUI</span>
                                 {% else %}
                                     <span class="badge badge-danger">NON</span>
