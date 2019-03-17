@@ -138,46 +138,12 @@
             <div class="tile">
                 <h3 class="tile-title text-center">Temps de production</h3>
                 <ul class="list-group">
-                    <li class="list-group-item">
-                        <a href="#">James Brown</a> a travaillé sur <a href="#">Projet 1</a>
-                        <div class="text-muted font-italic text-right">4 jours</div>
-                    </li>
-                    <li class="list-group-item">
-                        <a href="#">James Brown</a> a travaillé sur <a href="#">Projet 1</a>
-                        <div class="text-muted font-italic text-right">4 jours</div>
-                    </li>
-                    <li class="list-group-item">
-                        <a href="#">James Brown</a> a travaillé sur <a href="#">Projet 1</a>
-                        <div class="text-muted font-italic text-right">4 jours</div>
-                    </li>
-                    <li class="list-group-item">
-                        <a href="#">James Brown</a> a travaillé sur <a href="#">Projet 1</a>
-                        <div class="text-muted font-italic text-right">4 jours</div>
-                    </li>
-                    <li class="list-group-item">
-                        <a href="#">James Brown</a> a travaillé sur <a href="#">Projet 1</a>
-                        <div class="text-muted font-italic text-right">4 jours</div>
-                    </li>
-                    <li class="list-group-item">
-                        <a href="#">James Brown</a> a travaillé sur <a href="#">Projet 1</a>
-                        <div class="text-muted font-italic text-right">4 jours</div>
-                    </li>
-                    <li class="list-group-item">
-                        <a href="#">James Brown</a> a travaillé sur <a href="#">Projet 1</a>
-                        <div class="text-muted font-italic text-right">4 jours</div>
-                    </li>
-                    <li class="list-group-item">
-                        <a href="#">James Brown</a> a travaillé sur <a href="#">Projet 1</a>
-                        <div class="text-muted font-italic text-right">4 jours</div>
-                    </li>
-                    <li class="list-group-item">
-                        <a href="#">James Brown</a> a travaillé sur <a href="#">Projet 1</a>
-                        <div class="text-muted font-italic text-right">4 jours</div>
-                    </li>
-                    <li class="list-group-item">
-                        <a href="#">James Brown</a> a travaillé sur <a href="#">Projet 1</a>
-                        <div class="text-muted font-italic text-right">4 jours</div>
-                    </li>
+                    {% for time in ten_time %}
+                        <li class="list-group-item">
+                            <a href="{{ path('details_employe',{'id': time.employe.id}) }}"> {{ time.employe.prenom | capitalize ~ ' ' ~ time.employe.nom | capitalize }}</a> a travaillé sur <a href="{{ path('details_projet',{'id': time.projet.id}) }}">{{ time.projet.intitule }}</a>
+                            <div class="text-muted font-italic text-right">{{ time.duree }} jours</div>
+                        </li>
+                    {% endfor %}
                 </ul>
             </div>
         </div>

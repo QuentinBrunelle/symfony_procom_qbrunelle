@@ -33,6 +33,24 @@ class FormController extends AbstractController
     }
 
     /**
+     * @Route("/employe", name="ajout_employe")
+     */
+    public function ajoutEmploye()
+    {
+
+        $employe = '';
+
+        $chest = [
+            'active' => ["dashboard" => "", "projets" => "", "employes" => "active", "metiers" => "" ]
+        ];
+
+        return $this->render('dashboard/form.html.twig', [
+            'entity' => $employe,
+            'chest' => $chest
+        ]);
+    }
+
+    /**
      * @Route("/employe/{id}", name="modification_employe", requirements={"id" = "\d+"})
      */
     public function modificationEmploye(int $id)
@@ -44,6 +62,24 @@ class FormController extends AbstractController
         return $this->render('dashboard/form.html.twig', [
             'entity' => $employe,
             'active' => $active
+        ]);
+    }
+
+    /**
+     * @Route("/projet", name="ajout_projet")
+     */
+    public function ajoutProjet()
+    {
+
+        $projet = '';
+
+        $chest = [
+            'active' => ["dashboard" => "", "projets" => "active", "employes" => "", "metiers" => "" ]
+        ];
+
+        return $this->render('dashboard/form.html.twig', [
+            'entity' => $projet,
+            'chest' => $chest
         ]);
     }
 

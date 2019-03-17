@@ -11,13 +11,13 @@
         </div>
         <ul class="app-breadcrumb breadcrumb">
             <li class="breadcrumb-item">
-                <a href="#"><i class="fa fa-home fa-lg"></i></a>
+                <a href="{{ path('dashboard') }}"><i class="fa fa-home fa-lg"></i></a>
             </li>
             <li class="breadcrumb-item">{{ chest.title  }}</li>
         </ul>
     </div>
     <div class="tile pb-5">
-        <a href="#" class="btn btn-primary float-right mb-4"><i class="fa fa-plus-circle mr-2"></i>Ajouter un {{ type_liste }}</a>
+        <a href="{{ path('formulaire_ajout_' ~ type_liste) }}" class="btn btn-primary float-right mb-4"><i class="fa fa-plus-circle mr-2"></i>Ajouter un {{ type_liste }}</a>
         <div class="table-responsive">
             <table class="table table-striped table-hover">
                 <thead>
@@ -29,13 +29,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    {% if type_liste == "projet" %}
-                        {{ include('dashboard/liste_projets.html.twig', { 'projets': items }) }}
-                    {% elseif type_liste == "employe" %}
-                        {{ include('dashboard/liste_employes.html.twig', { 'employes': items }) }}
-                    {% else %}
-                        {{ include('dashboard/liste_metiers.html.twig', { 'metiers': items }) }}
-                    {% endif %}
+                    {{ include('dashboard/liste_' ~ type_liste ~ 's.html.twig', { (type_liste ~'s') : items }) }}
                 </tbody>
             </table>
         </div>

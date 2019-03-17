@@ -82,11 +82,16 @@ class DashboardController extends AbstractController
 
         $five_last_projects = $this->projetRepository->findBy([],['date' => 'DESC'],5);
         $five_projects = [];
+
         foreach($five_last_projects as $projet){
             $cout = $this->tempsDeProductionRepository->findCoutTotalProjet($projet->getId());
             $currentProject = [$projet, $cout[0]['cout']];
             array_push($five_projects, $currentProject);
         }
+
+        // 10 derniers temps de production
+
+        $ten_last_time = $this->tempsDeProductionRepository->findBy([],['dateSaisie' => 'DESC'],10);
 
         $chest = [
             'title' => 'Dashboard',
@@ -104,6 +109,7 @@ class DashboardController extends AbstractController
             'pourcentage_capex' => $pourcentage_capex,
             'five_projects' => $five_projects,
             'top' => $top,
+            'ten_time' => $ten_last_time,
             'chest' => $chest
         ]);
     }

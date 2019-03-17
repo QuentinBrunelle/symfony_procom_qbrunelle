@@ -54,7 +54,7 @@ class AppFixtures extends Fixture
             $employe
                 ->setEmail(mb_strtolower($employe->getPrenom()).'.'.mb_strtolower($employe->getNom()).'@gmail.com')
                 ->setCoutJournalier($coutJournalier[mt_rand(0, 7)])
-                ->setDateEmbauche(new \DateTime("now"));
+                ->setDateEmbauche(new \DateTime($this->randomDate()));
 
             $this->manager->persist($employe);
 
@@ -63,7 +63,8 @@ class AppFixtures extends Fixture
                 ->setIntitule("Projet n°".$i)
                 ->setDescription('Description du projet n°'.$i)
                 ->setType($type[mt_rand(0,1)])
-                ->setEstLivre($this->randomBool());
+                ->setEstLivre($this->randomBool())
+                ->setDate(new \DateTime($this->randomDate()));
 
             $this->manager->persist($projet);
 
@@ -73,7 +74,8 @@ class AppFixtures extends Fixture
             $tempsDeProduction
                 ->setCoutTotal($employe->getCoutJournalier() * $tempsDeProduction->getDuree())
                 ->setEmploye($employe)
-                ->setProjet($projet);
+                ->setProjet($projet)
+                ->setDateSaisie(new \DateTime($this->randomDate()));
 
             $this->manager->persist($tempsDeProduction);
         }
@@ -83,5 +85,14 @@ class AppFixtures extends Fixture
 
     private function randomBool(){
         return (bool) random_int(0,1);
+    }
+
+    private function randomDate(){
+        $start = strtotime('01 January 2015');
+        $end = time();
+
+        $timestamp = mt_rand($start,$end);
+
+        return date('Y-m-d', $timestamp);
     }
 }
