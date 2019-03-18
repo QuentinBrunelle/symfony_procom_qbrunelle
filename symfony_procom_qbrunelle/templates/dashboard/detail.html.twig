@@ -59,39 +59,9 @@
             {% else %}
                 <div class="tile">
                     <h3 class="title-title mb-4">Ajouter un temps</h3>
-                    <!--<form class="form-horizontal">
-                        <div class="form-group row">
-                            <label for="select-projects" class="control-label col-md-6">Projet concerné</label>
-                            <div class="col-md-6">
-                                <select class="form-control" id="select-projects">
-                                    {% if type_detail == "projet" %}
-                                        {% for item in items %}
-                                            <option>{{ item.prenom | capitalize ~ ' ' ~ item.nom | upper }}</option>
-                                        {% endfor %}
-                                    {% elseif type_detail == "employe" %}
-                                        {% for item in items %}
-                                            <option>{{ item.intitule }}</option>
-                                        {% endfor %}
-                                    {% endif %}
-                                </select>
-                            </div>
-                        </div>
-                        <div class="form-group row">
-                            <label for="days-count" class="control-label col-md-6">Nombre de jours</label>
-                            <div class="col-md-6">
-                                <input id="days-count" class="form-control" type="number" min="1">
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="offset-md-6 col-md-8">
-                                <button type="submit" class="btn btn-success"><i class="fa fa-save"></i>Enregistrer</button>
-                            </div>
-                        </div>
-                    </form> -->
-
                     {{ form_start(form) }}
                         <div class="form-group row">
-                            <label for="select-projects" class="control-label col-md-6">{{ (entity_form | slice(0,6) ~ "é") | capitalize }} concerné</label>
+                            <label for="select-projects" class="control-label col-md-6">{{ entity_form | capitalize }} concerné</label>
                             <div class="col-md-6">
                                 {{ form_errors(form[entity_form]) }}
                                 {{ form_widget(form[entity_form], {'attr': {'class': 'form-control' }}) }}

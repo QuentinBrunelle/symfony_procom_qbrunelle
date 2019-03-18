@@ -54,38 +54,27 @@ class DetailsController extends AbstractController
             'active' => ["dashboard" => "", "projets" => "active", "employes" => "", "metiers" => "" ]
         ];
 
-        // Formulaire
+        /*
+         *  FORMULAIRE
+         */
 
         $newTime = new TempsProductionEmployeProjet();
         $newTime->setProjet($projet);
-
-        // Choix de l'entité pour laquelle le formulaire va récupérer l'id
-
-        $entity_form = 'employe';
-
-        // Formulaire
 
         /**
          * On récupère la concaténation "NOM Prénom" afin de l'afficher dans le select (les clés seulement étant affichées)
          * On injecte ensuite un employé en tant que valeu (car la valeur attendue en retour du formulaire est un employé)
          */
-            //
 
         for($i = 0; $i < sizeof($employes); $i++){
             $label = strtoupper($employes[$i]->getNom()).' '.$employes[$i]->getPrenom();
             $liste[$label] = $employes[$i];
         }
 
-        /*liste_map = (array_map(function ($employe){
-            return [strtoupper($employe->getNom()).' '.$employe->getPrenom() => $employe->getId()];
-        }, $employes));
+        $entity_form = 'employe'; // Choix de l'entité pour laquelle le formulaire va récupérer l'id
 
-        foreach ($liste_map as $row){
-            $tab[array_keys($row)[0]] = $employes[$index];
-        }*/
-            // Création du formulaire ; Array_combine permet de faire en sorte que les clés soit "NOM Prénom" étant donné
-            // que ce sont les clés qui sont affichées à l'utilisateur
-
+        // Création du formulaire ; Array_combine permet de faire en sorte que les clés soit "NOM Prénom" étant donné
+        // que ce sont les clés qui sont affichées à l'utilisateur
 
         $form = $this->createForm(AddProductionTimeType::class, $newTime)->add($entity_form, ChoiceType::class,[
             'label' => 'Employés',

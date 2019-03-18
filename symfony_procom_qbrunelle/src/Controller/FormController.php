@@ -8,6 +8,9 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Employe;
 use App\Entity\Projet;
 use App\Entity\Metier;
+use App\Form\EmployeType;
+use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * @Route("/formulaire", name="formulaire_")
@@ -35,10 +38,31 @@ class FormController extends AbstractController
     /**
      * @Route("/employe", name="ajout_employe")
      */
-    public function ajoutEmploye()
+    public function ajoutEmploye(Request $request)
     {
 
-        $employe = '';
+        $employe = new Employe();
+
+        $metiers = $this->metierRepository->findAll();
+
+        for($i = 0; $i < sizeof($metiers); $i++){
+            $label = $metiers[$i]->getNom();
+            $liste[$label] = $metiers[$i];
+        }
+
+        $form = $this->createForm(EmployeType::class, $employe)->add('metier', ChoiceType::class,[
+            'label' => 'Métier',
+            'choices' => $liste
+        ]);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+            $employe->setArchivage(0);
+            $this->em->persist($employe);
+            $this->em->flush();
+
+            return $this->redirectToRoute('formulaire_ajout_employe');
+        }
 
         $chest = [
             'active' => ["dashboard" => "", "projets" => "", "employes" => "active", "metiers" => "" ]
@@ -46,6 +70,7 @@ class FormController extends AbstractController
 
         return $this->render('dashboard/form.html.twig', [
             'entity' => $employe,
+            'form' => $form->createView(),
             'chest' => $chest
         ]);
     }
