@@ -54,7 +54,53 @@ class DetailsController extends AbstractController
             'active' => ["dashboard" => "", "projets" => "active", "employes" => "", "metiers" => "" ]
         ];
 
-        $form = $this->createForm($request);
+        // Formulaire
+
+        $newTime = new TempsProductionEmployeProjet();
+        $newTime->setProjet($projet);
+
+        // Choix de l'entité pour laquelle le formulaire va récupérer l'id
+
+        $entity_form = 'employe';
+
+        // Formulaire
+
+        /**
+         * On récupère la concaténation "NOM Prénom" afin de l'afficher dans le select (les clés seulement étant affichées)
+         * On injecte ensuite un employé en tant que valeu (car la valeur attendue en retour du formulaire est un employé)
+         */
+            //
+
+        for($i = 0; $i < sizeof($employes); $i++){
+            $label = strtoupper($employes[$i]->getNom()).' '.$employes[$i]->getPrenom();
+            $liste[$label] = $employes[$i];
+        }
+
+        /*liste_map = (array_map(function ($employe){
+            return [strtoupper($employe->getNom()).' '.$employe->getPrenom() => $employe->getId()];
+        }, $employes));
+
+        foreach ($liste_map as $row){
+            $tab[array_keys($row)[0]] = $employes[$index];
+        }*/
+            // Création du formulaire ; Array_combine permet de faire en sorte que les clés soit "NOM Prénom" étant donné
+            // que ce sont les clés qui sont affichées à l'utilisateur
+
+
+        $form = $this->createForm(AddProductionTimeType::class, $newTime)->add($entity_form, ChoiceType::class,[
+            'label' => 'Employés',
+            'choices' => $liste
+        ]);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+            $newTime->setCoutTotal($newTime->getEmploye()->getCoutJournalier() * $newTime->getDuree());
+
+            $this->em->persist($newTime);
+            $this->em->flush();
+
+            return $this->redirectToRoute('details_projet',['id' => $id]);
+        }
 
         return $this->render('dashboard/detail.html.twig', [
             'type_detail' => 'projet',
@@ -62,7 +108,8 @@ class DetailsController extends AbstractController
             'items' => $employes,
             'historiqueProduction' => $historique,
             'erreur_btn' => false,
-            'form' => $form,
+            'form' => $form->createView(),
+            'entity_form' => $entity_form,
             'chest' => $chest
         ]);
     }
@@ -93,13 +140,18 @@ class DetailsController extends AbstractController
 
             // Choix de l'entité pour laquelle le formulaire va récupérer l'id
 
-        $entity = 'projet';
+        $entity_form = 'projet';
 
             // Création du formulaire
 
-        $form = $this->createForm(AddProductionTimeType::class, $newTime)->add($entity, ChoiceType::class,[
+        for($i = 0; $i < sizeof($projets); $i++){
+            $label = strtoupper($projets[$i]->getIntitule());
+            $liste[$label] = $projets[$i];
+        }
+
+        $form = $this->createForm(AddProductionTimeType::class, $newTime)->add($entity_form, ChoiceType::class,[
             'label' => 'Projets',
-            'choices' => $projets
+            'choices' => $liste
         ]);
         $form->handleRequest($request);
 
@@ -120,6 +172,7 @@ class DetailsController extends AbstractController
             'erreur_btn' => $erreur,
             'active' => $active,
             'form' => $form->createView(),
+            'entity_form' => $entity_form,
             'chest' => $chest
         ]);
     }

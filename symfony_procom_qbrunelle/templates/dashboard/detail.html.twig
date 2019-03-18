@@ -91,10 +91,10 @@
 
                     {{ form_start(form) }}
                         <div class="form-group row">
-                            <label for="select-projects" class="control-label col-md-6">Projet concerné</label>
+                            <label for="select-projects" class="control-label col-md-6">{{ (entity_form | slice(0,6) ~ "é") | capitalize }} concerné</label>
                             <div class="col-md-6">
-                                {{ form_errors(form.projet) }}
-                                {{ form_widget(form.projet, {'attr': {'class': 'form-control' }}) }}
+                                {{ form_errors(form[entity_form]) }}
+                                {{ form_widget(form[entity_form], {'attr': {'class': 'form-control' }}) }}
                             </div>
                         </div>
 
