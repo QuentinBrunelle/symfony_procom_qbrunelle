@@ -59,7 +59,7 @@
             {% else %}
                 <div class="tile">
                     <h3 class="title-title mb-4">Ajouter un temps</h3>
-                    <form class="form-horizontal">
+                    <!--<form class="form-horizontal">
                         <div class="form-group row">
                             <label for="select-projects" class="control-label col-md-6">Projet concerné</label>
                             <div class="col-md-6">
@@ -87,7 +87,31 @@
                                 <button type="submit" class="btn btn-success"><i class="fa fa-save"></i>Enregistrer</button>
                             </div>
                         </div>
-                    </form>
+                    </form> -->
+
+                    {{ form_start(form) }}
+                        <div class="form-group row">
+                            <label for="select-projects" class="control-label col-md-6">Projet concerné</label>
+                            <div class="col-md-6">
+                                {{ form_errors(form.projet) }}
+                                {{ form_widget(form.projet, {'attr': {'class': 'form-control' }}) }}
+                            </div>
+                        </div>
+
+                        <div class="form-group row">
+                            <label for="days-count" class="control-label col-md-6">Nombre de jours</label>
+                            <div class="col-md-6">
+                                {{ form_errors(form.duree) }}
+                                {{ form_widget(form.duree, {'attr': {'class': 'form-control' }}) }}
+                            </div>
+                        </div>
+
+                        <div class="row">
+                            <div class="offset-md-6 col-md-8">
+                                <button type="submit" class="btn btn-success"><i class="fa fa-save"></i>Enregistrer</button>
+                            </div>
+                        </div>
+                    {{ form_end(form)}}
                 </div>
             {% endif %}
         </div>
