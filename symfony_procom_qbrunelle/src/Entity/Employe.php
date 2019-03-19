@@ -5,7 +5,7 @@ namespace App\Entity;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-
+use Symfony\Component\Validator\Constraints as Assert;
 /**
  * @ORM\Entity(repositoryClass="App\Repository\EmployeRepository")
  * @ORM\Table(name="employes")
@@ -22,32 +22,45 @@ class Employe
 
     /**
      * @ORM\Column(type="string", length=255)
+     *
+     * @Assert\NotBlank(message="Ce champ ne peut pas être vide")
      */
     private $prenom;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *
+     * @Assert\NotBlank(message="Ce champ ne peut pas être vide")
      */
     private $nom;
 
     /**
      * @ORM\Column(type="string", length=255)
+     *
+     * @Assert\NotBlank(message="Ce champ ne peut pas être vide")
+     * @Assert\Email(message="L'email {{ value }} n'est pas valide.")
      */
     private $email;
 
     /**
      * @ORM\Column(type="float")
+     *
+     * @Assert\NotBlank(message="Ce champ ne peut pas être vide")
      */
     private $coutJournalier;
 
     /**
      * @ORM\Column(type="date")
+     *
+     * @Assert\NotBlank(message="Ce champ ne peut pas être vide")
      */
     private $dateEmbauche;
 
     /**
      * @ORM\ManyToOne(targetEntity="App\Entity\Metier", inversedBy="employes", cascade={"persist"})
      * @ORM\JoinColumn(nullable=false, name="metier_id")
+     *
+     * @Assert\NotBlank(message="Ce champ ne peut pas être vide")
      */
     private $metier;
 

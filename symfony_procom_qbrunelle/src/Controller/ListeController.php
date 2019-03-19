@@ -34,9 +34,9 @@ class ListeController extends AbstractController
     }
 
     /**
-     * @Route("/projets/{offset}", name="projets")
+     * @Route("/projets/{offset}/{erreur}", name="projets")
      */
-    public function projets(int $offset)
+    public function projets(int $offset, bool $erreur = false)
     {
         $projets = $this->projetRepository->findBy([],['date' => 'DESC'], 10, $offset);
         $nb_pages = ceil(count($this->projetRepository->findAll()) / 10) ;
@@ -55,6 +55,7 @@ class ListeController extends AbstractController
             'icon' => 'laptop',
             'active' => ["dashboard" => "", "projets" => "active", "employes" => "", "metiers" => "" ],
             'headers' => ["Intitulé", "Description", "Type", "Est livré", "Date de création"],
+            'error_message' => "Le projet ne peut être modifié ou supprimé car il a été livré..."
         ];
 
         return $this->render('dashboard/list.html.twig', [
@@ -63,14 +64,15 @@ class ListeController extends AbstractController
             'nb_pages' => $nb_pages,
             'current_page' => $current_page,
             'btns' => $btns,
+            'erreur_btn' => $erreur,
             'chest' => $chest
         ]);
     }
 
     /**
-     * @Route("/employes/{offset}", name="employes")
+     * @Route("/employes/{offset}/{erreur}", name="employes")
      */
-    public function employes(int $offset)
+    public function employes(int $offset, bool $erreur = false)
     {
         $employes = $this->employeRepository->findBy([], ['dateEmbauche' => 'DESC'], 10, $offset);
         $nb_pages = ceil(count($this->employeRepository->findAll()) / 10) ;
@@ -88,7 +90,8 @@ class ListeController extends AbstractController
             'title' => 'Employés',
             'icon' => 'users',
             'active' => ["dashboard" => "", "projets" => "", "employes" => "active", "metiers" => "" ],
-            'headers' => ["Nom", "Email", "Métier", "Coût journalier", "Date d'embauche"]
+            'headers' => ["Nom", "Email", "Métier", "Coût journalier", "Date d'embauche"],
+            'error_message' => "L'utilisateur ne peut être modifié ou archivé car il est déjà archivé..."
         ];
 
         return $this->render('dashboard/list.html.twig', [
@@ -97,6 +100,7 @@ class ListeController extends AbstractController
             'nb_pages' => $nb_pages,
             'current_page' => $current_page,
             'btns' => $btns,
+            'erreur_btn' => $erreur,
             'chest' => $chest
         ]);
     }
@@ -120,6 +124,7 @@ class ListeController extends AbstractController
             'nb_pages' => 1,
             'current_page' => 1,
             'btns' => ['disabled', 'disabled'],
+            'erreur_btn' => false,
             'chest' => $chest
         ]);
     }

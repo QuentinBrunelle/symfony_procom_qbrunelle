@@ -39,9 +39,9 @@ class DetailsController extends AbstractController
     }
 
     /**
-     * @Route("/projet/{id}", name="projet", requirements={"id" = "\d+"})
+     * @Route("/projet/{id}/{erreur}", name="projet", requirements={"id" = "\d+"})
      */
-    public function detailsProjet(Request $request, int $id)
+    public function detailsProjet(Request $request, int $id, bool $erreur = false)
     {
         $projet = $this->projetRepository->find($id);
         $employes = $this->employeRepository->findBy(['archivage' => 0]);

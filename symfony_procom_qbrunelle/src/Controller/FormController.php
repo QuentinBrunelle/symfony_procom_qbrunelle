@@ -61,6 +61,8 @@ class FormController extends AbstractController
             $this->em->persist($employe);
             $this->em->flush();
 
+            $this->addFlash('success','Un nouvel employé a bien été crée !');
+
             return $this->redirectToRoute('formulaire_ajout_employe');
         }
 
@@ -69,6 +71,7 @@ class FormController extends AbstractController
         ];
 
         return $this->render('dashboard/form.html.twig', [
+            'type_form' => "employe",
             'entity' => $employe,
             'form' => $form->createView(),
             'chest' => $chest
@@ -78,15 +81,42 @@ class FormController extends AbstractController
     /**
      * @Route("/employe/{id}", name="modification_employe", requirements={"id" = "\d+"})
      */
-    public function modificationEmploye(int $id)
+    public function modificationEmploye(int $id, Request $request)
     {
         $employe = $this->employeRepository->find($id);
 
-        $active = ["dashboard" => "", "projets" => "", "employes" => "active", "metiers" => "" ];
+        $metiers = $this->metierRepository->findAll();
+
+        for($i = 0; $i < sizeof($metiers); $i++){
+            $label = $metiers[$i]->getNom();
+            $liste[$label] = $metiers[$i];
+        }
+
+        $form = $this->createForm(EmployeType::class, $employe)->add('metier', ChoiceType::class,[
+            'label' => 'Métier',
+            'choices' => $liste
+        ]);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+            $employe->setArchivage(0);
+            $this->em->persist($employe);
+            $this->em->flush();
+
+            $this->addFlash('success','Modification réussie !');
+
+            return $this->redirectToRoute('formulaire_ajout_employe');
+        }
+
+        $chest = [
+            'active' => ["dashboard" => "", "projets" => "", "employes" => "active", "metiers" => "" ]
+        ];
 
         return $this->render('dashboard/form.html.twig', [
+            'type_form' => "employe",
             'entity' => $employe,
-            'active' => $active
+            'form' => $form->createView(),
+            'chest' => $chest
         ]);
     }
 
@@ -120,6 +150,24 @@ class FormController extends AbstractController
         return $this->render('dashboard/form.html.twig', [
             'entity' => $projet,
             'active' => $active
+        ]);
+    }
+
+    /**
+     * @Route("/projet", name="ajout_metier")
+     */
+    public function ajoutMetier()
+    {
+
+        $metier = '';
+
+        $chest = [
+            'active' => ["dashboard" => "", "projets" => "", "employes" => "", "metiers" => "active" ]
+        ];
+
+        return $this->render('dashboard/form.html.twig', [
+            'entity' => $metier,
+            'chest' => $chest
         ]);
     }
 }

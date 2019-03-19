@@ -16,13 +16,24 @@
                 <i class="fa fa-eye mr-0"></i>
             </a>
 
-            <a href="{{ path('formulaire_modification_projet',{'id': projet.id}) }}" class="btn btn-info btn-sm">
-                <i class="fa fa-pencil mr-0"></i>
-            </a>
+            {% if projet.estLivre == 1 %}
+                <a href="{{ path('formulaire_modification_projet',{'id': projet.id}) }}" class="btn btn-info btn-sm">
+                    <i class="fa fa-pencil mr-0"></i>
+                </a>
 
-            <a href="{{ path('liste_suppression_projet',{'id': projet.id}) }}" class="btn btn-danger btn-sm">
-                <i class="fa fa-trash-o mr-0"></i>
-            </a>
+                <a href="{{ path('liste_suppression_projet',{'id': projet.id}) }}" class="btn btn-danger btn-sm">
+                    <i class="fa fa-trash-o mr-0"></i>
+                </a>
+            {% else %}
+                <a href="{{ path('liste_projets',{'offset': 0, 'erreur': true }) }}" class="btn btn-secondary btn-sm">
+                    <i class="fa fa-pencil mr-0"></i>
+                </a>
+
+                <a href="{{ path('liste_projets',{'offset': 0, 'erreur': true }) }}" class="btn btn-secondary btn-sm">
+                    <i class="fa fa-trash-o mr-0"></i>
+                </a>
+            {% endif %}
+
         </td>
     </tr>
 {% endfor %}
