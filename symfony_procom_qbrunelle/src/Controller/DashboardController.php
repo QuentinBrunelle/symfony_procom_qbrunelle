@@ -56,7 +56,7 @@ class DashboardController extends AbstractController
         $top_employe = null;
 
         foreach ($employes as $employe){
-            $duree = $this->tempsDeProductionRepository->findTopEmploye($employe->getId());
+            $duree = $this->tempsDeProductionRepository->findTopEmploye($employe->getId()); // @Todo : Optimiser la requête
             $cout = $duree[0]['somme'] * $employe->getCoutJournalier();
             if($max < $cout){
                 $max = $cout;

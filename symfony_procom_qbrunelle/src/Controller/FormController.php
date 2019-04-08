@@ -70,7 +70,7 @@ class FormController extends AbstractController
             'active' => ["dashboard" => "", "projets" => "", "employes" => "active", "metiers" => "" ]
         ];
 
-        return $this->render('dashboard/form.html.twig', [
+        return $this->render('form/form.html.twig', [
             'type_form' => "employe",
             'entity' => $employe,
             'form' => $form->createView(),
@@ -112,7 +112,7 @@ class FormController extends AbstractController
             'active' => ["dashboard" => "", "projets" => "", "employes" => "active", "metiers" => "" ]
         ];
 
-        return $this->render('dashboard/form.html.twig', [
+        return $this->render('form/form.html.twig', [
             'type_form' => "employe",
             'entity' => $employe,
             'form' => $form->createView(),
@@ -132,7 +132,7 @@ class FormController extends AbstractController
             'active' => ["dashboard" => "", "projets" => "active", "employes" => "", "metiers" => "" ]
         ];
 
-        return $this->render('dashboard/form.html.twig', [
+        return $this->render('form/form.html.twig', [
             'entity' => $projet,
             'chest' => $chest
         ]);
@@ -147,7 +147,7 @@ class FormController extends AbstractController
 
         $active = ["dashboard" => "", "projets" => "active", "employes" => "", "metiers" => "" ];
 
-        return $this->render('dashboard/form.html.twig', [
+        return $this->render('form/form.html.twig', [
             'entity' => $projet,
             'active' => $active
         ]);
@@ -165,7 +165,7 @@ class FormController extends AbstractController
             'active' => ["dashboard" => "", "projets" => "", "employes" => "", "metiers" => "active" ]
         ];
 
-        return $this->render('dashboard/form.html.twig', [
+        return $this->render('form/form.html.twig', [
             'entity' => $metier,
             'chest' => $chest
         ]);

@@ -91,7 +91,7 @@ class DetailsController extends AbstractController
             return $this->redirectToRoute('details_projet',['id' => $id]);
         }
 
-        return $this->render('dashboard/detail.html.twig', [
+        return $this->render('details/detail.html.twig', [
             'type_detail' => 'projet',
             'entity' => $projet,
             'items' => $employes,
@@ -153,7 +153,7 @@ class DetailsController extends AbstractController
             return $this->redirectToRoute('details_employe',['id' => $id]);
         }
 
-        return $this->render('dashboard/detail.html.twig', [
+        return $this->render('details/detail.html.twig', [
             'type_detail' => 'employe',
             'entity' => $employe,
             'items' => $projets,

@@ -58,7 +58,7 @@ class ListeController extends AbstractController
             'error_message' => "Le projet ne peut être modifié ou supprimé car il a été livré..."
         ];
 
-        return $this->render('dashboard/list.html.twig', [
+        return $this->render('liste/list.html.twig', [
             'type_liste' => 'projet',
             'items' => $projets,
             'nb_pages' => $nb_pages,
@@ -66,6 +66,21 @@ class ListeController extends AbstractController
             'btns' => $btns,
             'erreur_btn' => $erreur,
             'chest' => $chest
+        ]);
+    }
+
+    /**
+     * @Route("/projet/{id}", name="suppression_projet", requirements={"id" = "\d+"})
+     */
+    public function suppressionProjet(int $id)
+    {
+        $projet = $this->projetRepository->find($id);
+
+        $active = ["dashboard" => "", "projets" => "active", "employes" => "", "metiers" => "" ];
+
+        return $this->render('dashboard/form.html.twig', [
+            'entity' => $projet,
+            'active' => $active
         ]);
     }
 
@@ -94,7 +109,7 @@ class ListeController extends AbstractController
             'error_message' => "L'utilisateur ne peut être modifié ou archivé car il est déjà archivé..."
         ];
 
-        return $this->render('dashboard/list.html.twig', [
+        return $this->render('liste/list.html.twig', [
             'type_liste' => 'employe',
             'items' => $employes,
             'nb_pages' => $nb_pages,
@@ -103,6 +118,18 @@ class ListeController extends AbstractController
             'erreur_btn' => $erreur,
             'chest' => $chest
         ]);
+    }
+
+    /**
+     * @Route("/employe/{id}", name="suppression_employe", requirements={"id" = "\d+"})
+     */
+    public function suppressionEmploye(int $id)
+    {
+        $employe = $this->employeRepository->find($id);
+        $this->em->remove($employe);
+        $this->em->flush();
+
+        return $this->employes(0,false);
     }
 
     /**
@@ -118,7 +145,7 @@ class ListeController extends AbstractController
             'active' => ["dashboard" => "", "projets" => "", "employes" => "", "metiers" => "active" ],
             'headers' => ["Nom"]
         ];
-        return $this->render('dashboard/list.html.twig', [
+        return $this->render('liste/list.html.twig', [
             'type_liste' => "metier",
             'items' => $metiers,
             'nb_pages' => 1,
@@ -126,36 +153,6 @@ class ListeController extends AbstractController
             'btns' => ['disabled', 'disabled'],
             'erreur_btn' => false,
             'chest' => $chest
-        ]);
-    }
-
-    /**
-     * @Route("/employe/{id}", name="suppression_employe", requirements={"id" = "\d+"})
-     */
-    public function suppressionEmploye(int $id)
-    {
-        $employe = $this->employeRepository->find($id);
-
-        $active = ["dashboard" => "", "projets" => "", "employes" => "active", "metiers" => "" ];
-
-        return $this->render('dashboard/form.html.twig', [
-            'entity' => $employe,
-            'active' => $active
-        ]);
-    }
-
-    /**
-     * @Route("/projet/{id}", name="suppression_projet", requirements={"id" = "\d+"})
-     */
-    public function suppressionProjet(int $id)
-    {
-        $projet = $this->projetRepository->find($id);
-
-        $active = ["dashboard" => "", "projets" => "active", "employes" => "", "metiers" => "" ];
-
-        return $this->render('dashboard/form.html.twig', [
-            'entity' => $projet,
-            'active' => $active
         ]);
     }
 }
