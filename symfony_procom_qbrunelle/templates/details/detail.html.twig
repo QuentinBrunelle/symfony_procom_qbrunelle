@@ -28,16 +28,23 @@
                 </table>
 
                 {% if type_detail == "projet" %}
-                    <a href="{{ path('liste_suppression_projet',{'id': entity.id}) }}" class="btn btn-success"><i class="fa fa-paper-plane"></i>Livrer</a>
-                    <a href="{{ path('formulaire_modification_projet',{'id': entity.id}) }}" class="btn btn-info"><i class="fa fa-pencil"></i>Modifier</a>
-                    <a href="{{ path('liste_suppression_projet',{'id': entity.id}) }}" class="btn btn-danger"><i class="fa fa-trash-o"></i>Supprimer</a>
+                    {% if entity.estLivre == 0 %}
+                        <a href="{{ path('details_livraison_projet',{'id': entity.id}) }}" class="btn btn-success"><i class="fa fa-paper-plane"></i>Livrer</a>
+                        <a href="{{ path('formulaire_modification_projet',{'id': entity.id}) }}" class="btn btn-info"><i class="fa fa-pencil"></i>Modifier</a>
+                        <a href="{{ path('liste_suppression_projet',{'id': entity.id}) }}" class="btn btn-danger"><i class="fa fa-trash-o"></i>Supprimer</a>
+                    {% else %}
+                        <a href="{{ path('details_projet',{'id': entity.id, 'offset': 0, 'erreur': true }) }}" class="btn btn-secondary"><i class="fa fa-paper-plane"></i>Livrer</a>
+                        <a href="{{ path('details_projet',{'id': entity.id, 'offset': 0, 'erreur': true }) }}" class="btn btn-secondary"><i class="fa fa-pencil"></i>Modifier</a>
+                        <a href="{{ path('details_projet',{'id': entity.id, 'offset': 0, 'erreur': true }) }}" class="btn btn-secondary"><i class="fa fa-trash-o"></i>Supprimer</a>
+                    {% endif %}
+
                 {% elseif type_detail == "employe" %}
                     {% if entity.archivage == 0 %}
                         <a href="{{ path('formulaire_modification_employe',{'id': entity.id}) }}" class="btn btn-info"><i class="fa fa-pencil"></i>Modifier</a>
                         <a href="{{ path('liste_suppression_employe',{'id': entity.id}) }}" class="btn btn-danger"><i class="fa fa-trash-o"></i>Archiver</a>
                     {% else %}
-                        <a href="{{ path('details_employe',{'id': entity.id, 'erreur': true }) }}" class="btn btn-secondary"><i class="fa fa-pencil"></i>Modifier</a>
-                        <a href="{{ path('details_employe',{'id': entity.id, 'erreur': true }) }}" class="btn btn-secondary"><i class="fa fa-trash-o"></i>Archiver</a>
+                        <a href="{{ path('details_employe',{'id': entity.id, 'offset': 0, 'erreur': true }) }}" class="btn btn-secondary"><i class="fa fa-pencil"></i>Modifier</a>
+                        <a href="{{ path('details_employe',{'id': entity.id, 'offset': 0, 'erreur': true }) }}" class="btn btn-secondary"><i class="fa fa-trash-o"></i>Archiver</a>
                     {% endif %}
                 {% endif %}
 
@@ -48,7 +55,11 @@
                                 <i class="fa fa-info-circle"></i>
                             </div>
                             <div class="col-sm-10">
-                                <p>L'utilisateur ne peut être modifié ou archivé car il est déjà archivé</p>
+                                {% if type_detail == "employe" %}
+                                    <p>L'utilisateur ne peut être modifié ou archivé car il est déjà archivé</p>
+                                {% elseif type_detail == "projet" %}
+                                    <p>Le projet est livré. Il ne peut être modifié ou supprimé.</p>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -111,7 +122,11 @@
                                 <tr>
                                     <td>
                                         {% if type_detail == "projet" %}
-                                            {{ ligne.employe.prenom | capitalize ~ ' ' ~ ligne.employe.nom | upper }}
+                                            {% if ligne.employe.archivage == 0 %}
+                                                {{ ligne.employe.prenom | capitalize ~ ' ' ~ ligne.employe.nom | upper }}
+                                            {% else %}
+                                                <span class="barre">{{ ligne.employe.prenom | capitalize ~ ' ' ~ ligne.employe.nom | upper }}</span>
+                                            {% endif %}
                                         {% elseif type_detail == "employe" %}
                                             {{ ligne.projet.intitule }}
                                         {% endif %}
@@ -120,9 +135,11 @@
                                     <td>{{ ligne.dateSaisie | date('d-m-Y') }}</td>
                                     <td>{{ ligne.coutTotal }} €</td>
                                     <td>
-                                        <a href="#" class="btn btn-danger btn-sm">
-                                            <i class="fa fa-trash-o mr-0"></i>
-                                        </a>
+                                        {% if type_detail == "employe" %}
+                                            <a href="{{ path('details_delete_production',{'id': ligne.id, 'idEntity': entity.id }) }}" class="btn btn-danger btn-sm">
+                                                <i class="fa fa-trash-o mr-0"></i>
+                                            </a>
+                                        {% endif %}
                                     </td>
                                 </tr>
                             {% endfor %}
@@ -132,20 +149,22 @@
                 <hr/>
                 <nav class="float-right">
                     <ul class="pagination">
-                        <li class="page-item disabled">
-                            <span class="page-link">&laquo;</span>
+                        <li class="page-item {{ btns[0] }}">
+                            <a class="page-link" href="{{ path('details_' ~ type_detail, {'id': entity.id,'offset': (current_page - 2) * 10 }) }}">&laquo;</a>
                         </li>
-                        <li class="page-item active" aria-current="page">
-                            <span class="page-link">1<span class="sr-only">(current)</span></span>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">2</a></li>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">3</a>
-                        </li>
-                        <li class="page-item">
-                            <a class="page-link" href="#">&raquo;</a>
+                        {% for i in 1..nb_pages %}
+                            {% if i == current_page %}
+                                <li class="page-item active" aria-current="page">
+                                    <span class="page-link">{{ i }}<span class="sr-only">(current)</span></span>
+                                </li>
+                            {% else %}
+                                <li class="page-item">
+                                    <a class="page-link" href="{{ path('details_' ~ type_detail, {'id': entity.id,'offset': (i -1) * 10 }) }}">{{ i }}</a></li>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+                        <li class="page-item {{ btns[1] }}">
+                            <a class="page-link" href="{{ path('details_' ~ type_detail, {'id': entity.id,'offset': (current_page) * 10 }) }}">&raquo;</a>
                         </li>
                     </ul>
                 </nav>

@@ -11,7 +11,7 @@ namespace App\Form;
 use App\Entity\Employe;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
-use Symfony\Component\Form\Extension\Core\Type\IntegerType;
+use Symfony\Component\Form\Extension\Core\Type\NumberType;
 use Symfony\Component\Form\Extension\Core\Type\EmailType;
 use Symfony\Component\Form\Extension\Core\Type\DateType;
 use Symfony\Component\Form\FormBuilderInterface;
@@ -25,7 +25,9 @@ class EmployeType extends AbstractType
             ->add('prenom', TextType::class)
             ->add('nom', TextType::class)
             ->add('email', EmailType::class)
-            ->add('coutJournalier', IntegerType::class)
+            ->add('coutJournalier', NumberType::class, [
+                'scale' => 2
+            ])
             ->add('dateEmbauche', DateType::class,[
                 'widget' => 'single_text'
             ]);

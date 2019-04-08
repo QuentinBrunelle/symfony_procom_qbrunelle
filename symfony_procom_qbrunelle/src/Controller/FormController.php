@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Form\ProjetType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Doctrine\ORM\EntityManagerInterface;
@@ -9,6 +10,7 @@ use App\Entity\Employe;
 use App\Entity\Projet;
 use App\Entity\Metier;
 use App\Form\EmployeType;
+use App\Form\MetierType;
 use Symfony\Component\Form\Extension\Core\Type\ChoiceType;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -67,7 +69,9 @@ class FormController extends AbstractController
         }
 
         $chest = [
-            'active' => ["dashboard" => "", "projets" => "", "employes" => "active", "metiers" => "" ]
+            'active' => ["dashboard" => "", "projets" => "", "employes" => "active", "metiers" => "" ],
+            'titre' => "Ajout d'un employé",
+            'icon' => 'users',
         ];
 
         return $this->render('form/form.html.twig', [
@@ -109,7 +113,9 @@ class FormController extends AbstractController
         }
 
         $chest = [
-            'active' => ["dashboard" => "", "projets" => "", "employes" => "active", "metiers" => "" ]
+            'active' => ["dashboard" => "", "projets" => "", "employes" => "active", "metiers" => "" ],
+            'titre' => "Edition de ".$employe->getPrenom()." ".$employe->getNom()."",
+            'icon' => 'users',
         ];
 
         return $this->render('form/form.html.twig', [
@@ -123,17 +129,38 @@ class FormController extends AbstractController
     /**
      * @Route("/projet", name="ajout_projet")
      */
-    public function ajoutProjet()
+    public function ajoutProjet(Request $request)
     {
 
-        $projet = '';
+        $projet = new Projet();
+
+        $liste = ['Capex' => 'Capex', 'Opex' => 'Opex'];
+        $form = $this->createForm(ProjetType::class, $projet)->add('type', ChoiceType::class,[
+            'label' => 'Type',
+            'choices' => $liste
+        ]);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+            $projet->setEstLivre(false);
+            $this->em->persist($projet);
+            $this->em->flush();
+
+            $this->addFlash('success','Un nouveau projet a bien été crée !');
+
+            return $this->redirectToRoute('formulaire_ajout_projet');
+        }
 
         $chest = [
-            'active' => ["dashboard" => "", "projets" => "active", "employes" => "", "metiers" => "" ]
+            'active' => ["dashboard" => "", "projets" => "active", "employes" => "", "metiers" => "" ],
+            'titre' => "Ajout d'un projet",
+            'icon' => 'laptop',
         ];
 
         return $this->render('form/form.html.twig', [
+            'type_form' => "projet",
             'entity' => $projet,
+            'form' => $form->createView(),
             'chest' => $chest
         ]);
     }
@@ -141,32 +168,103 @@ class FormController extends AbstractController
     /**
      * @Route("/projet/{id}", name="modification_projet", requirements={"id" = "\d+"})
      */
-    public function modificationProjet(int $id)
+    public function modificationProjet(int $id, Request $request)
     {
         $projet = $this->projetRepository->find($id);
+        $liste = ['Capex' => 'Capex', 'Opex' => 'Opex'];
+        $form = $this->createForm(ProjetType::class, $projet)->add('type', ChoiceType::class,[
+            'label' => 'Type',
+            'choices' => $liste
+        ]);
+        $form->handleRequest($request);
 
-        $active = ["dashboard" => "", "projets" => "active", "employes" => "", "metiers" => "" ];
+        if($form->isSubmitted() && $form->isValid()){
+            $projet->setEstLivre(false);
+            $this->em->persist($projet);
+            $this->em->flush();
+
+            $this->addFlash('success','Modification réussie !');
+
+            return $this->redirectToRoute('formulaire_ajout_projet');
+        }
+
+        $chest = [
+            'active' => ["dashboard" => "", "projets" => "active", "employes" => "", "metiers" => "" ],
+            'titre' => "Edition de ".$projet->getIntitule()."",
+            'icon' => 'laptop',
+        ];
 
         return $this->render('form/form.html.twig', [
+            'type_form' => "projet",
             'entity' => $projet,
-            'active' => $active
+            'form' => $form->createView(),
+            'chest' => $chest
         ]);
     }
 
     /**
-     * @Route("/projet", name="ajout_metier")
+     * @Route("/metier", name="ajout_metier")
      */
-    public function ajoutMetier()
+    public function ajoutMetier(Request $request)
     {
 
-        $metier = '';
+        $metier = new Metier();
+
+        $form = $this->createForm(MetierType::class, $metier);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+            $this->em->persist($metier);
+            $this->em->flush();
+
+            $this->addFlash('success','Un nouveau métier a bien été crée !');
+
+            return $this->redirectToRoute('formulaire_ajout_metier');
+        }
 
         $chest = [
-            'active' => ["dashboard" => "", "projets" => "", "employes" => "", "metiers" => "active" ]
+            'active' => ["dashboard" => "", "projets" => "", "employes" => "", "metiers" => "active" ],
+            'titre' => "Ajout d'un métier",
+            'icon' => 'book',
         ];
 
         return $this->render('form/form.html.twig', [
+            'type_form' => "metier",
             'entity' => $metier,
+            'form' => $form->createView(),
+            'chest' => $chest
+        ]);
+    }
+
+    /**
+     * @Route("/metier/{id}", name="modification_metier", requirements={"id" = "\d+"})
+     */
+    public function modificationMetier(int $id, Request $request)
+    {
+        $metier = $this->metierRepository->find($id);
+
+        $form = $this->createForm(MetierType::class, $metier);
+        $form->handleRequest($request);
+
+        if($form->isSubmitted() && $form->isValid()){
+            $this->em->persist($metier);
+            $this->em->flush();
+
+            $this->addFlash('success','Modification réussie !');
+
+            return $this->redirectToRoute('formulaire_ajout_metier');
+        }
+
+        $chest = [
+            'active' => ["dashboard" => "", "projets" => "", "employes" => "", "metiers" => "active" ],
+            'titre' => "Edition de ".$metier->getNom(),
+            'icon' => 'book',
+        ];
+
+        return $this->render('form/form.html.twig', [
+            'type_form' => "metier",
+            'entity' => $metier,
+            'form' => $form->createView(),
             'chest' => $chest
         ]);
     }

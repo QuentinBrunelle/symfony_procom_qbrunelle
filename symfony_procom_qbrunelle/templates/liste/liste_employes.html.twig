@@ -12,7 +12,7 @@
         <td>{{ employe.coutJournalier ~ '€'}}</td>
         <td>{{ employe.dateEmbauche | localizeddate('none', 'none', null, null, 'MMMM Y') | capitalize }}</td>
         <td>
-            <a href="{{ path('details_employe',{'id': employe.id}) }}" class="btn btn-primary btn-sm">
+            <a href="{{ path('details_employe',{'id': employe.id, 'offset': 0}) }}" class="btn btn-primary btn-sm">
                 <i class="fa fa-eye mr-0"></i>
             </a>
             {% if employe.archivage == 0 %}

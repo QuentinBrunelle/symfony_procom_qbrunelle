@@ -1,0 +1,30 @@
+{% for message in app.session.flashBag.get('success') %}
+    <div class="alert alert-success" role="alert">
+        {{ message }}
+    </div>
+{% endfor %}
+
+{{ form_start(form) }}
+
+<section>
+    <h3>Informations générales</h3>
+    <div class="row mt-4">
+        <div class="col-md-4"></div>
+        <div class="col-md-8">
+            <div class="form-group row">
+                <label class="control-label col-md-3">Nom</label>
+                <div class="col-md-9">
+                    {{ form_errors(form.nom) }}
+                    {{ form_widget(form.nom, {'attr': {'class': 'form-control'}}) }}
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<hr/>
+<div class="row">
+    <div class="offset-md-6 col-md-6">
+        <button type="submit" class="btn btn-success"><i class="fa fa-save"></i>Enregistrer</button>
+    </div>
+</div>
+{{ form_end(form) }}

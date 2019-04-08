@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="{{ app.request.locale }}">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="description" content="Bienvenue sur procom">
+    <meta name="author" content="Shoefony">
+    <title>{% block title %}PROCOM{% endblock %}</title>
+    <style>
+        .img_panda{
+            width: 250px;
+            height: 200px;
+            border-radius: 15px;
+        }
+    </style>
+</head>
+<body>
+<div>
+    <div style="text-align: center;text-transform: uppercase;text-decoration: underline">
+        <h1>Bonjour {{ projet.destinataire }} !!</h1>
+        <img src="https://cdn-europe1.lanmedia.fr/var/europe1/storage/images/europe1/international/le-panda-geant-nest-plus-en-danger-mais-reste-menace-2837755/28733065-1-fre-FR/Le-panda-geant-n-est-plus-en-danger-mais-reste-menace.jpg" alt="Panda" class="img_panda">
+    </div>
+    <h1>Compte rendu du projet : {{ projet.projet.intitule }}</h1>
+
+    <hr>
+
+    <p>Description : {{ projet.projet.description }}</p>
+    <p>Type : {{ projet.projet.type }}</p>
+    <p>Est livré : {{ projet.projet.estLivre }}</p>
+    <p>Date de création : {{ projet.projet.date | date("d/m/Y") }}</p>
+    <p>Coût total de production : {{ projet.coutTotal }}</p>
+    <p>Employés affectés : {{ projet.nbEmployes }}</p>
+
+    <h3 class="tile-title">Historique des temps de production</h3>
+    <div class="table-responsive">
+        <table class="table table-striped table-hover table-sm">
+        <thead>
+            <th>Nom Prénom</th>
+            <th>Temps</th>
+            <th>Date de saisie</th>
+            <th>Coût total</th>
+        </thead>
+        <tbody>
+            {% for temps in projet.historique %}
+                <tr>
+                    <td>{{ temps.employe.prenom | capitalize ~ ' ' ~ temps.employe.nom | upper  }}</td>
+                    <td>{{ temps.duree }} jours</td>
+                    <td>{{ temps.dateSaisie | date("d/m/Y")}}</td>
+                    <td>{{ temps.coutTotal }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    </div>
+</div>
+</body>
+</html>

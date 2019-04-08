@@ -12,11 +12,11 @@
         </th>
         <td>{{ projet.date | date("d/m/Y") }}</td>
         <td>
-            <a href="{{ path('details_projet',{'id': projet.id}) }}" class="btn btn-primary btn-sm">
+            <a href="{{ path('details_projet',{'id': projet.id, 'offset': 0}) }}" class="btn btn-primary btn-sm">
                 <i class="fa fa-eye mr-0"></i>
             </a>
 
-            {% if projet.estLivre == 1 %}
+            {% if projet.estLivre == 0 %}
                 <a href="{{ path('formulaire_modification_projet',{'id': projet.id}) }}" class="btn btn-info btn-sm">
                     <i class="fa fa-pencil mr-0"></i>
                 </a>

@@ -85,7 +85,8 @@ class DashboardController extends AbstractController
 
         foreach($five_last_projects as $projet){
             $cout = $this->tempsDeProductionRepository->findCoutTotalProjet($projet->getId());
-            $currentProject = [$projet, $cout[0]['cout']];
+            $coutTotal = $cout[0]['coutTotal'] == null ? 0 : $cout[0]['coutTotal'];
+            $currentProject = [$projet, $coutTotal];
             array_push($five_projects, $currentProject);
         }
 

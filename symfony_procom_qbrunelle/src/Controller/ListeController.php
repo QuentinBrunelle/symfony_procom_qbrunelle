@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\TempsProductionEmployeProjet;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,17 +21,28 @@ class ListeController extends AbstractController
      */
     private $em;
 
+
+    /**
+     * @var \Swift_Mailer
+     */
+    private $mailer;
+    private $contactEmailAdress;
+
     private $employeRepository;
     private $projetRepository;
     private $metierRepository;
+    private $tempsDeProductionRepository;
 
 
-    public function __construct(EntityManagerInterface $em)
+    public function __construct(\Swift_Mailer $mailer,EntityManagerInterface $em)
     {
+        $this->mailer = $mailer;
+        $this->contactEmailAdress = 'quentin.brunelle@gmail.com';
         $this->em = $em;
         $this->employeRepository = $this->em->getRepository(Employe::class);
         $this->projetRepository = $this->em->getRepository(Projet::class);
         $this->metierRepository = $this->em->getRepository(Metier::class);
+        $this->tempsDeProductionRepository = $this->em->getRepository(TempsProductionEmployeProjet::class);
     }
 
     /**
@@ -74,14 +86,25 @@ class ListeController extends AbstractController
      */
     public function suppressionProjet(int $id)
     {
-        $projet = $this->projetRepository->find($id);
+        /*$this->em->remove($projet);
+        $this->em->flush();*/
 
-        $active = ["dashboard" => "", "projets" => "active", "employes" => "", "metiers" => "" ];
+        $projet['projet'] = $this->projetRepository->find($id);
+        $projet['destinataire'] = 'quentin.brunelle@gmail.com';
+        $projet['historique'] = $this->tempsDeProductionRepository->findBy(['projet' => $id],['dateSaisie' => 'DESC']);
+        $coutTotalProjet = $this->tempsDeProductionRepository->findCoutTotalProjet($id);
+        $projet['coutTotal'] = $coutTotalProjet[0]['coutTotal'] == null ? 0 : $coutTotalProjet[0]['coutTotal'];
+        $projet['nbEmployes'] = ($this->tempsDeProductionRepository->findEmployesByProject($id))[0]['employes'];
 
-        return $this->render('dashboard/form.html.twig', [
-            'entity' => $projet,
-            'active' => $active
-        ]);
+        $message = (new \Swift_Message('Un message de contact sur Shoefony'))
+            ->setFrom('quentin.brunelle@gmail.com')
+            ->setTo($this->contactEmailAdress)
+            ->setBody(
+                $this->renderView('email/projet.html.twig',['projet' => $projet]),'text/html'
+            );
+
+        $this->mailer->send($message);
+        return $this->projets(0,false);
     }
 
     /**
@@ -126,7 +149,8 @@ class ListeController extends AbstractController
     public function suppressionEmploye(int $id)
     {
         $employe = $this->employeRepository->find($id);
-        $this->em->remove($employe);
+        $employe->setArchivage(true);
+        $this->em->persist($employe);
         $this->em->flush();
 
         return $this->employes(0,false);
@@ -135,7 +159,7 @@ class ListeController extends AbstractController
     /**
      * @Route("/metiers", name="metiers")
      */
-    public function metiers()
+    public function metiers(bool $erreur = false, string $erreur_message = '')
     {
         $metiers = $this->metierRepository->findAll();
 
@@ -143,16 +167,52 @@ class ListeController extends AbstractController
             'title' => 'Métiers',
             'icon' => 'book',
             'active' => ["dashboard" => "", "projets" => "", "employes" => "", "metiers" => "active" ],
-            'headers' => ["Nom"]
+            'headers' => ["Nom"],
+            'error_message' => $erreur_message
         ];
+
         return $this->render('liste/list.html.twig', [
             'type_liste' => "metier",
             'items' => $metiers,
             'nb_pages' => 1,
             'current_page' => 1,
             'btns' => ['disabled', 'disabled'],
-            'erreur_btn' => false,
+            'erreur_btn' => $erreur,
             'chest' => $chest
         ]);
+    }
+
+    /**
+     * @Route("/metier/{id}", name="suppression_metier", requirements={"id" = "\d+"})
+     */
+    public function suppressionMetier(int $id)
+    {
+        $metier = $this->metierRepository->find($id); // On récupère le métier que l'on souhaite supprimer
+        $employes = $this->employeRepository->findAll(); // On récupère la liste des employés
+        // @todo Récupérer les employés pour lesquels le metier est égale à l'id (plutot que tout récup et check)
+
+        /**
+         * On vérifie si un ou plusieurs employés ont ce métier
+         */
+        $nb_employes = 0;
+        foreach ($employes as $employe){
+            if($employe->getMetier()->getId() === $metier->getId()){
+                $nb_employes++;
+            }
+        }
+
+        // Si des employés ont ce métier, on envoi un message d'erreur
+        if($nb_employes > 0){
+            $erreur = true;
+            $error_message = "Ce métier est utilisé par un ou plusieurs employés. Il ne peut être supprimé.";
+        }else{ // Sinon on le supprime
+            $this->em->remove($metier);
+            $this->em->flush();
+
+            $erreur = false;
+            $error_message = "";
+        }
+
+        return $this->metiers($erreur, $error_message);
     }
 }

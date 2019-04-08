@@ -52,7 +52,7 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-sm-6 col-xs-6 text-muted">
-                                    <p><i class="fa fa-database mr-2 text-primary"></i> {{ pourcentage_capex  }}% CAPEX</p>
+                                    <p><i class="fa fa-database mr-2 text-primary"></i> {{ pourcentage_capex | number_format(2) }}% CAPEX</p>
                                 </div>
                             </div>
                             <div class="embed-responsive embed-responsive-16by9">
@@ -67,7 +67,7 @@
                         <div class="card-body">
                             <div class="row">
                                 <div class="col-sm-6 col-xs-6 text-muted">
-                                    <p><i class="fa fa fa-check-square-o mr-2 text-primary"></i> {{ pourcentage_delivered }}% Livrés</p>
+                                    <p><i class="fa fa fa-check-square-o mr-2 text-primary"></i> {{ pourcentage_delivered | number_format(2) }}% Livrés</p>
                                 </div>
                             </div>
                             <div class="embed-responsive embed-responsive-16by9">
@@ -116,7 +116,7 @@
                     {% for projet in five_projects %}
                         <tr>
                             <th>
-                                <a href="{{ path('details_projet',{'id': projet[0].id}) }}">{{ projet[0].intitule }}</a>
+                                <a href="{{ path('details_projet',{'id': projet[0].id, 'offset': 0}) }}">{{ projet[0].intitule }}</a>
                             </th>
                             <th>{{ projet[0].type }}</th>
                             <th>{{ projet[0].date | date("d/m/Y") }}</th>
@@ -140,7 +140,7 @@
                 <ul class="list-group">
                     {% for time in ten_time %}
                         <li class="list-group-item">
-                            <a href="{{ path('details_employe',{'id': time.employe.id}) }}"> {{ time.employe.prenom | capitalize ~ ' ' ~ time.employe.nom | capitalize }}</a> a travaillé sur <a href="{{ path('details_projet',{'id': time.projet.id}) }}">{{ time.projet.intitule }}</a>
+                            <a href="{{ path('details_employe',{'id': time.employe.id, 'offset': 0}) }}"> {{ time.employe.prenom | capitalize ~ ' ' ~ time.employe.nom | capitalize }}</a> a travaillé sur <a href="{{ path('details_projet',{'id': time.projet.id, 'offset':0}) }}">{{ time.projet.intitule }}</a>
                             <div class="text-muted font-italic text-right">{{ time.duree }} jours</div>
                         </li>
                     {% endfor %}

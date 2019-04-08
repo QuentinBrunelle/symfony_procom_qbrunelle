@@ -1,21 +1,21 @@
 {% extends 'layout.html.twig' %}
 
-{% block title %}Edition d'un employé - PROCOM{% endblock %}
+{% block title %}{{ chest.titre }} - PROCOM{% endblock %}
 
 {% block content %}
     <main class="app-content">
         <div class="app-title">
             <div>
-                <h1><i class="fa fa-users"></i>&nbsp;Edition d'un employé</h1>
+                <h1><i class="fa fa-{{ chest.icon }}"></i>&nbsp;{{ chest.titre }}</h1>
             </div>
             <ul class="app-breadcrumb breadcrumb">
                 <li class="breadcrumb-item">
-                    <a href="#"><i class="fa fa-home fa-lg"></i></a>
+                    <a href="{{ path('dashboard') }}"><i class="fa fa-home fa-lg"></i></a>
                 </li>
                 <li class="breadcrumb-item">
-                    <a href="#">Employés</a>
+                    <a href="{{ path('liste_' ~ type_form ~'s',{'offset': 0 }) }}">{{ type_form | capitalize ~ "s"  }}</a>
                 </li>
-                <li class="breadcrumb-item">Edition d'un employé</li>
+                <li class="breadcrumb-item">{{ chest.titre }}</li>
             </ul>
         </div>
         <div class="tile">

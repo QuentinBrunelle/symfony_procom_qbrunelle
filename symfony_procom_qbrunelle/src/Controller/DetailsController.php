@@ -39,14 +39,31 @@ class DetailsController extends AbstractController
     }
 
     /**
-     * @Route("/projet/{id}/{erreur}", name="projet", requirements={"id" = "\d+"})
+     * @Route("/projet/{id}/{offset}/{erreur}", name="projet", requirements={"id" = "\d+"})
      */
-    public function detailsProjet(Request $request, int $id, bool $erreur = false)
+    public function detailsProjet(Request $request, int $id, int $offset, bool $erreur = false)
     {
         $projet = $this->projetRepository->find($id);
         $employes = $this->employeRepository->findBy(['archivage' => 0]);
 
-        $historique = $this->tempsDeProductionRepository->findBy(['projet' => $id]);
+        $historique = $this->tempsDeProductionRepository->findBy(['projet' => $id],['dateSaisie' => 'DESC'], 10, $offset);
+
+        $coutTotalProjet = $this->tempsDeProductionRepository->findCoutTotalProjet($id);
+        $nbEmployes = $this->tempsDeProductionRepository->findEmployesByProject($id);
+
+        $coutTotal = $coutTotalProjet[0]['coutTotal'] == null ? 0 : $coutTotalProjet[0]['coutTotal'];
+
+        $nb_pages = ceil(count($this->tempsDeProductionRepository->findBy(['projet' => $id])) / 10);
+        $nb_pages = $nb_pages < 1 ? 1 : $nb_pages;
+        $current_page = ($offset /10) + 1;
+
+        if($current_page == 1){
+            $btns = ['disabled',''];
+        }else if($current_page == $nb_pages){
+            $btns = ['', 'disabled'];
+        }else{
+            $btns = ['', ''];
+        }
 
         $chest = [
             'title' => $projet->getIntitule(),
@@ -73,9 +90,6 @@ class DetailsController extends AbstractController
 
         $entity_form = 'employe'; // Choix de l'entité pour laquelle le formulaire va récupérer l'id
 
-        // Création du formulaire ; Array_combine permet de faire en sorte que les clés soit "NOM Prénom" étant donné
-        // que ce sont les clés qui sont affichées à l'utilisateur
-
         $form = $this->createForm(AddProductionTimeType::class, $newTime)->add($entity_form, ChoiceType::class,[
             'label' => 'Employés',
             'choices' => $liste
@@ -88,33 +102,61 @@ class DetailsController extends AbstractController
             $this->em->persist($newTime);
             $this->em->flush();
 
-            return $this->redirectToRoute('details_projet',['id' => $id]);
+            return $this->redirectToRoute('details_projet',['id' => $id, 'offset' => 0]);
         }
 
         return $this->render('details/detail.html.twig', [
             'type_detail' => 'projet',
             'entity' => $projet,
+            'coutTotal' => $coutTotal,
+            'nbEmployes' => $nbEmployes[0]['employes'],
             'items' => $employes,
             'historiqueProduction' => $historique,
-            'erreur_btn' => false,
+            'erreur_btn' => $erreur,
             'form' => $form->createView(),
             'entity_form' => $entity_form,
+            'nb_pages' => $nb_pages,
+            'current_page' => $current_page,
+            'btns' => $btns,
             'chest' => $chest
         ]);
     }
 
     /**
-     * @Route("/employe/{id}/{erreur}", name="employe", requirements={"id" = "\d+"})
+     * @Route("/projet/livraison/{id}", name="livraison_projet", requirements={"id" = "\d+"})
      */
-    public function detailsEmploye(int $id, bool $erreur = false, Request $request)
+
+    public function livraisonProjet(Request $request, int $id){
+        $projet = $this->projetRepository->find($id);
+        $projet->setEstLivre(1);
+        $this->em->persist($projet);
+        $this->em->flush();
+
+        return $this->redirectToRoute('details_projet',['id' => $id]);
+    }
+
+    /**
+     * @Route("/employe/{id}/{offset}/{erreur}", name="employe", requirements={"id" = "\d+"})
+     */
+    public function detailsEmploye(int $id, int $offset, bool $erreur = false, Request $request)
     {
 
         $employe = $this->employeRepository->find($id);
-        $projets = $this->projetRepository->findAll();
+        $projets = $this->projetRepository->findBy(['estLivre' => 0]);
 
-        $historique = $this->tempsDeProductionRepository->findBy(['employe' => $id]);
+        $historique = $this->tempsDeProductionRepository->findBy(['employe' => $id],['dateSaisie' => 'DESC'], 10, $offset);
 
-        $active = ["dashboard" => "", "projets" => "", "employes" => "active", "metiers" => "" ];
+        $nb_pages = ceil(count($this->tempsDeProductionRepository->findBy(['employe' => $id])) / 10) ;
+        $nb_pages = $nb_pages < 1 ? 1 : $nb_pages;
+        $current_page = ($offset /10) + 1;
+
+        if($current_page == 1){
+            $btns = ['disabled',''];
+        }else if($current_page == $nb_pages){
+            $btns = ['', 'disabled'];
+        }else{
+            $btns = ['', ''];
+        }
 
         $chest = [
             'title' => $employe->getPrenom().' '.strtoupper($employe->getNom()),
@@ -150,7 +192,7 @@ class DetailsController extends AbstractController
             $this->em->persist($newTime);
             $this->em->flush();
 
-            return $this->redirectToRoute('details_employe',['id' => $id]);
+            return $this->redirectToRoute('details_employe',['id' => $id, 'offset' => 0]);
         }
 
         return $this->render('details/detail.html.twig', [
@@ -159,10 +201,24 @@ class DetailsController extends AbstractController
             'items' => $projets,
             'historiqueProduction' => $historique,
             'erreur_btn' => $erreur,
-            'active' => $active,
             'form' => $form->createView(),
             'entity_form' => $entity_form,
+            'nb_pages' => $nb_pages,
+            'current_page' => $current_page,
+            'btns' => $btns,
             'chest' => $chest
         ]);
+    }
+
+    /**
+     * @Route("/production/delete/{id}/{idEntity}", name="delete_production", requirements={"id" = "\d+"})
+     */
+
+    public function deleteTempsDeProduction(int $id, int $idEntity){
+        $tempsDeProduction = $this->tempsDeProductionRepository->find($id);
+        $this->em->remove($tempsDeProduction);
+        $this->em->flush();
+
+        return $this->redirectToRoute('details_employe',['id' => $idEntity]);
     }
 }

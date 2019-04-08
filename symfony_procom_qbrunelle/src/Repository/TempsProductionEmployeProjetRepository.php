@@ -32,21 +32,19 @@ class TempsProductionEmployeProjetRepository extends ServiceEntityRepository
     public function findCoutTotalProjet($id){
         return $this
             ->createQueryBuilder('t')
-            ->addSelect('SUM(t.coutTotal) as cout')
+            ->addSelect('SUM(t.coutTotal) as coutTotal')
             ->andWhere('t.projet = :id')
             ->setParameter('id', $id)
             ->getQuery()
             ->getResult();
     }
 
-
-    public function findFourLastProducts(){
+    public function findEmployesByProject($id){
         return $this
-            ->createQueryBuilder('p')
-            ->addSelect('i')
-            ->leftJoin('p.image', 'i')
-            ->orderBy('p.created_at', 'DESC')
-            ->setMaxResults('4')
+            ->createQueryBuilder('t')
+            ->addSelect('COUNT(DISTINCT t.employe) as employes')
+            ->andWhere('t.projet = :id')
+            ->setParameter('id', $id)
             ->getQuery()
             ->getResult();
     }
