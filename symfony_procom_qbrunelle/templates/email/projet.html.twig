@@ -7,19 +7,11 @@
     <meta name="description" content="Bienvenue sur procom">
     <meta name="author" content="Shoefony">
     <title>{% block title %}PROCOM{% endblock %}</title>
-    <style>
-        .img_panda{
-            width: 250px;
-            height: 200px;
-            border-radius: 15px;
-        }
-    </style>
 </head>
 <body>
 <div>
     <div style="text-align: center;text-transform: uppercase;text-decoration: underline">
         <h1>Bonjour {{ projet.destinataire }} !!</h1>
-        <img src="https://cdn-europe1.lanmedia.fr/var/europe1/storage/images/europe1/international/le-panda-geant-nest-plus-en-danger-mais-reste-menace-2837755/28733065-1-fre-FR/Le-panda-geant-n-est-plus-en-danger-mais-reste-menace.jpg" alt="Panda" class="img_panda">
     </div>
     <h1>Compte rendu du projet : {{ projet.projet.intitule }}</h1>
 
