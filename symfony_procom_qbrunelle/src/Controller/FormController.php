@@ -42,28 +42,29 @@ class FormController extends AbstractController
      */
     public function ajoutEmploye(Request $request)
     {
-
         $employe = new Employe();
 
+        // Récupération de l'ensemble des métiers afin de les mettre en clés du tableau $liste
         $metiers = $this->metierRepository->findAll();
-
         for($i = 0; $i < sizeof($metiers); $i++){
             $label = $metiers[$i]->getNom();
             $liste[$label] = $metiers[$i];
         }
 
+        // Création du formulaire
         $form = $this->createForm(EmployeType::class, $employe)->add('metier', ChoiceType::class,[
             'label' => 'Métier',
             'choices' => $liste
         ]);
         $form->handleRequest($request);
 
+        // Validation du formulaire
         if($form->isSubmitted() && $form->isValid()){
             $employe->setArchivage(0);
             $this->em->persist($employe);
             $this->em->flush();
 
-            $this->addFlash('success','Un nouvel employé a bien été crée !');
+            $this->addFlash('success','Un nouvel employé a bien été crée !'); // Message flash succés
 
             return $this->redirectToRoute('formulaire_ajout_employe');
         }
@@ -87,27 +88,29 @@ class FormController extends AbstractController
      */
     public function modificationEmploye(int $id, Request $request)
     {
-        $employe = $this->employeRepository->find($id);
+        $employe = $this->employeRepository->find($id); // Récupération de l'employé à modifier
 
+        // Récupération de l'ensemble des métiers afin de les mettre en clés du tableau $liste
         $metiers = $this->metierRepository->findAll();
-
         for($i = 0; $i < sizeof($metiers); $i++){
             $label = $metiers[$i]->getNom();
             $liste[$label] = $metiers[$i];
         }
 
+        // Création du formulaire
         $form = $this->createForm(EmployeType::class, $employe)->add('metier', ChoiceType::class,[
             'label' => 'Métier',
             'choices' => $liste
         ]);
         $form->handleRequest($request);
 
+        // Validation du formulaire
         if($form->isSubmitted() && $form->isValid()){
             $employe->setArchivage(0);
             $this->em->persist($employe);
             $this->em->flush();
 
-            $this->addFlash('success','Modification réussie !');
+            $this->addFlash('success','Modification réussie !'); // Message flash succés
 
             return $this->redirectToRoute('formulaire_ajout_employe');
         }
@@ -134,19 +137,26 @@ class FormController extends AbstractController
 
         $projet = new Projet();
 
-        $liste = ['Capex' => 'Capex', 'Opex' => 'Opex'];
+        // Création d'un tableau avec Capex et Opex comme clés
+        $liste = [
+            'Capex' => 'Capex',
+            'Opex' => 'Opex'
+        ];
+
+        // Création du formulaire
         $form = $this->createForm(ProjetType::class, $projet)->add('type', ChoiceType::class,[
             'label' => 'Type',
             'choices' => $liste
         ]);
         $form->handleRequest($request);
 
+        // Validation du formulaire
         if($form->isSubmitted() && $form->isValid()){
             $projet->setEstLivre(false);
             $this->em->persist($projet);
             $this->em->flush();
 
-            $this->addFlash('success','Un nouveau projet a bien été crée !');
+            $this->addFlash('success','Un nouveau projet a bien été crée !'); // Message flash succés
 
             return $this->redirectToRoute('formulaire_ajout_projet');
         }
@@ -170,20 +180,28 @@ class FormController extends AbstractController
      */
     public function modificationProjet(int $id, Request $request)
     {
-        $projet = $this->projetRepository->find($id);
-        $liste = ['Capex' => 'Capex', 'Opex' => 'Opex'];
+        $projet = $this->projetRepository->find($id); // Récupération du projet à modifier
+
+        // Création d'un tableau avec Capex et Opex comme clés
+        $liste = [
+            'Capex' => 'Capex',
+            'Opex' => 'Opex'
+        ];
+
+        // Création du formulaire
         $form = $this->createForm(ProjetType::class, $projet)->add('type', ChoiceType::class,[
             'label' => 'Type',
             'choices' => $liste
         ]);
         $form->handleRequest($request);
 
+        // Validation du formulaire
         if($form->isSubmitted() && $form->isValid()){
             $projet->setEstLivre(false);
             $this->em->persist($projet);
             $this->em->flush();
 
-            $this->addFlash('success','Modification réussie !');
+            $this->addFlash('success','Modification réussie !'); // Message flash succés
 
             return $this->redirectToRoute('formulaire_ajout_projet');
         }
@@ -210,14 +228,16 @@ class FormController extends AbstractController
 
         $metier = new Metier();
 
+        // Création du formulaire
         $form = $this->createForm(MetierType::class, $metier);
         $form->handleRequest($request);
 
+        // Validation du formulaire
         if($form->isSubmitted() && $form->isValid()){
             $this->em->persist($metier);
             $this->em->flush();
 
-            $this->addFlash('success','Un nouveau métier a bien été crée !');
+            $this->addFlash('success','Un nouveau métier a bien été crée !'); // message flash succés
 
             return $this->redirectToRoute('formulaire_ajout_metier');
         }
@@ -241,16 +261,18 @@ class FormController extends AbstractController
      */
     public function modificationMetier(int $id, Request $request)
     {
-        $metier = $this->metierRepository->find($id);
+        $metier = $this->metierRepository->find($id); // Récupération du métier à modifier
 
+        // Création du formulaire
         $form = $this->createForm(MetierType::class, $metier);
         $form->handleRequest($request);
 
+        // Validation du formulaire
         if($form->isSubmitted() && $form->isValid()){
             $this->em->persist($metier);
             $this->em->flush();
 
-            $this->addFlash('success','Modification réussie !');
+            $this->addFlash('success','Modification réussie !'); // Message flash succés
 
             return $this->redirectToRoute('formulaire_ajout_metier');
         }
