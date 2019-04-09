@@ -130,8 +130,9 @@ class DetailsController extends AbstractController
      * @Route("/projet/livraison/{id}", name="livraison_projet", requirements={"id" = "\d+"})
      */
 
-    public function livraisonProjet(Request $request, int $id){
+    public function livraisonProjet(int $id){
         // Récupération du projet puis set la livraison à true
+
         $projet = $this->projetRepository->find($id);
         $projet->setEstLivre(1);
         $this->em->persist($projet);
@@ -145,16 +146,19 @@ class DetailsController extends AbstractController
      */
     public function detailsEmploye(int $id, int $offset, bool $erreur = false, Request $request)
     {
-
+        // On récupère l'employé pour lequel on souhaite obtenir des détails
         $employe = $this->employeRepository->find($id);
-        $projets = $this->projetRepository->findBy(['estLivre' => 0]);
 
+        // historique des temps de production par date décroissante et par tranche de 10
         $historique = $this->tempsDeProductionRepository->findBy(['employe' => $id],['dateSaisie' => 'DESC'], 10, $offset);
 
+        // Nombre de pages nécessaires pour l'affichage de tous les temps de production par tranche de 10 résultats
         $nb_pages = ceil(count($this->tempsDeProductionRepository->findBy(['employe' => $id])) / 10) ;
         $nb_pages = $nb_pages < 1 ? 1 : $nb_pages;
-        $current_page = ($offset /10) + 1;
 
+        $current_page = ($offset /10) + 1;// Page actuelle où se situe l'utilisateur
+
+        // $btns détermine si les chevrons sont désactivés ou non
         if($current_page == 1){
             $btns = ['disabled',''];
         }else if($current_page == $nb_pages){
@@ -163,34 +167,30 @@ class DetailsController extends AbstractController
             $btns = ['', ''];
         }
 
-        $chest = [
-            'title' => $employe->getPrenom().' '.strtoupper($employe->getNom()),
-            'icon' => 'users',
-            'active' => ["dashboard" => "", "projets" => "", "employes" => "active", "metiers" => "" ]
-        ];
+        /* FORMULAIRE */
 
-        // Formulaire
-
+        // Création d'un nouveau temps de production et affectation de l'employé sur lequel on se trouve
         $newTime = new TempsProductionEmployeProjet();
         $newTime->setEmploye($employe);
 
-            // Choix de l'entité pour laquelle le formulaire va récupérer l'id
-
+        // Choix de l'entité pour laquelle le formulaire va récupérer l'id (dans le cas d'un projet, il faut récupérer
+        // l'employé). Utilisé dans la création du formulaire dans le template
         $entity_form = 'projet';
 
-            // Création du formulaire
-
+        $projets = $this->projetRepository->findBy(['estLivre' => 0]); // Liste des projets non livrés
         for($i = 0; $i < sizeof($projets); $i++){
             $label = strtoupper($projets[$i]->getIntitule());
             $liste[$label] = $projets[$i];
         }
 
+        // Création du formulaire et ajout d'un champ de type 'select' utilisant la liste des employés non archivés
         $form = $this->createForm(AddProductionTimeType::class, $newTime)->add($entity_form, ChoiceType::class,[
             'label' => 'Projets',
             'choices' => $liste
         ]);
         $form->handleRequest($request);
 
+        // Validation du formulaire
         if($form->isSubmitted() && $form->isValid()){
             $newTime->setCoutTotal($newTime->getEmploye()->getCoutJournalier() * $newTime->getDuree());
 
@@ -199,6 +199,12 @@ class DetailsController extends AbstractController
 
             return $this->redirectToRoute('details_employe',['id' => $id, 'offset' => 0]);
         }
+
+        $chest = [
+            'title' => $employe->getPrenom().' '.strtoupper($employe->getNom()),
+            'icon' => 'users',
+            'active' => ["dashboard" => "", "projets" => "", "employes" => "active", "metiers" => "" ]
+        ];
 
         return $this->render('details/detail.html.twig', [
             'type_detail' => 'employe',
@@ -220,6 +226,8 @@ class DetailsController extends AbstractController
      */
 
     public function deleteTempsDeProduction(int $id, int $idEntity){
+
+        // Récupération du temps de production puis suppression de celui-ci
         $tempsDeProduction = $this->tempsDeProductionRepository->find($id);
         $this->em->remove($tempsDeProduction);
         $this->em->flush();

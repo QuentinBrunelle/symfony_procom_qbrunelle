@@ -8,6 +8,7 @@ use Doctrine\ORM\EntityManagerInterface;
 use App\Entity\Employe;
 use App\Entity\Projet;
 use App\Entity\TempsProductionEmployeProjet;
+use Symfony\Component\HttpFoundation\Request;
 
 class DashboardController extends AbstractController
 {
@@ -32,9 +33,9 @@ class DashboardController extends AbstractController
     /**
      * @Route("/", name="dashboard")
      */
-    public function index()
+    public function index(Request $request)
     {
-        // Projets en cours et projets livrés (+ taux de livraison)
+        // Projets en cours + projets livrés + taux de livraison
 
         $nb_total_projets = count($this->projetRepository->findAll());
         $nb_current_projects = count($this->projetRepository->findBy(['estLivre' => 0]));
@@ -42,7 +43,7 @@ class DashboardController extends AbstractController
         $pourcentage_delivered = ($nb_delivered_projects / $nb_total_projets)* 100;
 
 
-        // Rentabilité
+        // Rentabilité Capex/Opex
 
         $nb_capex = count($this->projetRepository->findBy(['type' => "Capex"]));
         $nb_opex = count($this->projetRepository->findBy(['type' => "Opex"]));
@@ -112,39 +113,6 @@ class DashboardController extends AbstractController
             'top' => $top,
             'ten_time' => $ten_last_time,
             'chest' => $chest
-        ]);
-    }
-
-    /**
-     * @Route("/projets", name="projets")
-     */
-    public function projets()
-    {
-        $active = ["dashboard" => "", "projets" => "active", "employes" => "", "metiers" => "" ];
-        return $this->render('dashboard/list.html.twig', [
-            'active' => $active
-        ]);
-    }
-
-    /**
-     * @Route("/employes", name="employes")
-     */
-    public function employes()
-    {
-        $active = ["dashboard" => "", "projets" => "", "employes" => "active", "metiers" => "" ];
-        return $this->render('dashboard/list.html.twig', [
-            'active' => $active
-        ]);
-    }
-
-    /**
-     * @Route("/metiers", name="metiers")
-     */
-    public function metiers()
-    {
-        $active = ["dashboard" => "", "projets" => "", "employes" => "", "metiers" => "active" ];
-        return $this->render('dashboard/list.html.twig', [
-            'active' => $active
         ]);
     }
 }

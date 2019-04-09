@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\TempsProductionEmployeProjet;
+use App\Form\RechercheType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -48,9 +49,10 @@ class ListeController extends AbstractController
     /**
      * @Route("/projets/{offset}/{erreur}", name="projets")
      */
-    public function projets(int $offset, bool $erreur = false)
+    public function projets(int $offset, bool $erreur = false, array $filteredProjects = [])
     {
-        $projets = $this->projetRepository->findBy([],['date' => 'DESC'], 10, $offset);
+        $projets = $filteredProjects === [] ? $this->projetRepository->findBy([],['date' => 'DESC'], 10, $offset) : $filteredProjects;
+
         $nb_pages = ceil(count($this->projetRepository->findAll()) / 10) ;
         $current_page = ($offset /10) + 1;
 
@@ -86,9 +88,6 @@ class ListeController extends AbstractController
      */
     public function suppressionProjet(int $id)
     {
-        /*$this->em->remove($projet);
-        $this->em->flush();*/
-
         $projet['projet'] = $this->projetRepository->find($id);
         $projet['destinataire'] = 'quentin.brunelle@gmail.com';
         $projet['historique'] = $this->tempsDeProductionRepository->findBy(['projet' => $id],['dateSaisie' => 'DESC']);
@@ -104,6 +103,10 @@ class ListeController extends AbstractController
             );
 
         $this->mailer->send($message);
+
+        $this->em->remove($projet['projet']);
+        $this->em->flush();
+
         return $this->projets(0,false);
     }
 
@@ -214,5 +217,26 @@ class ListeController extends AbstractController
         }
 
         return $this->metiers($erreur, $error_message);
+    }
+
+    /**
+     * @Route("/recherche", name="recherche")
+     */
+    public function recherche(Request $request)
+    {
+        $recherche = $request->get('recherche'); // On récupère la valeur de l'input
+
+        $projets = $this->projetRepository->findAll(); // On récupère l'ensemble des projets
+
+        // Si l'intitulé ou la description d'un projet contient la chaine issue du formulaire, on l'ajoute dans filteredProjects
+        $filteredProjects = [];
+        foreach ($projets as $projet){
+            if(stristr($projet->getIntitule(), $recherche) != false || stristr($projet->getDescription(),$recherche) != false){
+                array_push($filteredProjects, $projet);
+            }
+        }
+
+        return $this->projets(0, false, $filteredProjects);
+        //dd($recherche, $projets, $filteredProjects);
     }
 }

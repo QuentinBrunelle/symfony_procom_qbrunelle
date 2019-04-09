@@ -18,9 +18,9 @@
         <!-- Navbar Right Menu-->
         <ul class="app-nav">
             <li class="app-search">
-                <form>
-                    <input class="app-search__input" type="search" placeholder="Recherche">
-                    <button type="submit" class="app-search__button"><i class="fa fa-search"></i></button>
+                <form action="{{ path('liste_recherche') }}" method="post" name="formulaire_recherche">
+                    <input class="app-search__input" type="search" placeholder="Recherche" name="recherche" value="">
+                    <input type="submit" name="valider" value="" class="app-search__button"><i class="fa fa-search"></i></input>
                 </form>
             </li>
         </ul>

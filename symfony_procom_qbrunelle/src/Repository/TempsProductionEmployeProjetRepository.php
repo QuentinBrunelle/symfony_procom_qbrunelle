@@ -3,6 +3,7 @@
 namespace App\Repository;
 
 use App\Entity\TempsProductionEmployeProjet;
+use App\Entity\Employe;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Symfony\Bridge\Doctrine\RegistryInterface;
 
@@ -28,6 +29,16 @@ class TempsProductionEmployeProjetRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    /*public function findTopEmployeOptimize(){
+        $query = $this->createQueryBuilder('t');
+        return $query
+            ->addSelect('MAX(SUM(t.duree) * e.coutJournalier)')
+            ->leftJoin('t.employe', 'e')
+            ->addSelect('e')
+            ->getQuery()
+            ->getResult();
+    }*/
 
     public function findCoutTotalProjet($id){
         return $this
