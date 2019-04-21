@@ -28,7 +28,6 @@ class DetailsController extends AbstractController
     private $metierRepository;
     private $tempsDeProductionRepository;
 
-
     public function __construct(EntityManagerInterface $em)
     {
         $this->em = $em;
@@ -131,8 +130,8 @@ class DetailsController extends AbstractController
      */
 
     public function livraisonProjet(int $id){
-        // Récupération du projet puis set la livraison à true
 
+        // Récupération du projet puis set la livraison à true
         $projet = $this->projetRepository->find($id);
         $projet->setEstLivre(1);
         $this->em->persist($projet);

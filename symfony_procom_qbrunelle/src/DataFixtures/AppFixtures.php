@@ -68,6 +68,7 @@ class AppFixtures extends Fixture
 
             $this->manager->persist($projet);
 
+            // Création d'un temps de production
             $tempsDeProduction = (new TempsProductionEmployeProjet())
                 ->setDuree(mt_rand(1,16));
 
@@ -83,10 +84,12 @@ class AppFixtures extends Fixture
         $this->manager->flush();
     }
 
+    // Création d'un booléen aléatoire
     private function randomBool(){
         return (bool) random_int(0,1);
     }
 
+    // Création d'une date aléatoire entre le 01 Janvier 2015 et la date du jour
     private function randomDate(){
         $start = strtotime('01 January 2015');
         $end = time();

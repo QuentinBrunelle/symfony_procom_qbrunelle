@@ -108,7 +108,7 @@ class ListeController extends AbstractController
                 $this->renderView('email/projet.html.twig',['projet' => $projet]),'text/html'
             );
 
-        $this->mailer->send($message); // Envoi le message
+        $this->mailer->send($message); // Envoi du message
 
         // Suppression du projet
         $this->em->remove($projet['projet']);
