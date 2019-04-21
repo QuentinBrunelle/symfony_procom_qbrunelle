@@ -50,4 +50,8 @@ Les métiers sont issus d'un tableau en dur.
 L'ensemble des dates (dateEmbauche, dateCreation, dateSaisie) sont créées de manières 
 aléatoires dans l'intervalle [01 Janvier 2015 - Date du jour].
 
+## Améliorations
 
+Je souhaite améliorer la requête concernant l'employé du mois afin de réduire le nombre
+de requêtes à une seule. Néanmoins, je n'ai pas réussi à créer une telle requête dans
+le Query Builder.

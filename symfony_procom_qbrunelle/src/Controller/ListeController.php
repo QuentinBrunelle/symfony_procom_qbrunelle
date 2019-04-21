@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\TempsProductionEmployeProjet;
-use App\Form\RechercheType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\HttpFoundation\Request;
@@ -21,7 +20,6 @@ class ListeController extends AbstractController
      * @var EntityManagerInterface
      */
     private $em;
-
 
     /**
      * @var \Swift_Mailer
@@ -51,11 +49,17 @@ class ListeController extends AbstractController
      */
     public function projets(int $offset, bool $erreur = false, array $filteredProjects = [])
     {
+        // Liste des projets à afficher : Si $filteredProjects est définie, c'est cette variable qui sera utilisée.
+        // Sinon, on récupère les projets par date décroissante par tranche de 10.
         $projets = $filteredProjects === [] ? $this->projetRepository->findBy([],['date' => 'DESC'], 10, $offset) : $filteredProjects;
 
+        // Nombre de pages nécessaires pour l'affichage de tous les temps de production par tranche de 10 résultats
         $nb_pages = ceil(count($this->projetRepository->findAll()) / 10) ;
-        $current_page = ($offset /10) + 1;
+        $nb_pages = $nb_pages < 1 ? 1 : $nb_pages;
 
+        $current_page = ($offset /10) + 1; // Page actuelle où se situe l'utilisateur
+
+        // $btns détermine si les chevrons sont désactivés ou non
         if($current_page == 1){
             $btns = ['disabled',''];
         }else if($current_page == $nb_pages){
@@ -88,6 +92,7 @@ class ListeController extends AbstractController
      */
     public function suppressionProjet(int $id)
     {
+        // L'ensemble des éléments fournis dans le mail sont placés dans l'array $projet
         $projet['projet'] = $this->projetRepository->find($id);
         $projet['destinataire'] = 'quentin.brunelle@gmail.com';
         $projet['historique'] = $this->tempsDeProductionRepository->findBy(['projet' => $id],['dateSaisie' => 'DESC']);
@@ -95,6 +100,7 @@ class ListeController extends AbstractController
         $projet['coutTotal'] = $coutTotalProjet[0]['coutTotal'] == null ? 0 : $coutTotalProjet[0]['coutTotal'];
         $projet['nbEmployes'] = ($this->tempsDeProductionRepository->findEmployesByProject($id))[0]['employes'];
 
+        // On prépare le message en utilisant SwiftMailer via la view adéquate
         $message = (new \Swift_Message('Un message de contact sur Shoefony'))
             ->setFrom('quentin.brunelle@gmail.com')
             ->setTo($this->contactEmailAdress)
@@ -102,8 +108,9 @@ class ListeController extends AbstractController
                 $this->renderView('email/projet.html.twig',['projet' => $projet]),'text/html'
             );
 
-        $this->mailer->send($message);
+        $this->mailer->send($message); // Envoi le message
 
+        // Suppression du projet
         $this->em->remove($projet['projet']);
         $this->em->flush();
 
@@ -116,9 +123,12 @@ class ListeController extends AbstractController
     public function employes(int $offset, bool $erreur = false)
     {
         $employes = $this->employeRepository->findBy([], ['dateEmbauche' => 'DESC'], 10, $offset);
+
+        // Gestion de la pagination
         $nb_pages = ceil(count($this->employeRepository->findAll()) / 10) ;
         $current_page = ($offset /10) + 1;
 
+        // Gestion de l'affichage des boutons de pagination
         if($current_page == 1){
             $btns = ['disabled',''];
         }else if($current_page == $nb_pages){
@@ -191,29 +201,21 @@ class ListeController extends AbstractController
     public function suppressionMetier(int $id)
     {
         $metier = $this->metierRepository->find($id); // On récupère le métier que l'on souhaite supprimer
-        $employes = $this->employeRepository->findAll(); // On récupère la liste des employés
-        // @todo Récupérer les employés pour lesquels le metier est égale à l'id (plutot que tout récup et check)
 
         /**
          * On vérifie si un ou plusieurs employés ont ce métier
          */
-        $nb_employes = 0;
-        foreach ($employes as $employe){
-            if($employe->getMetier()->getId() === $metier->getId()){
-                $nb_employes++;
-            }
-        }
+        $employes_work = $this->employeRepository->findBy(['metier' => $id]);
 
-        // Si des employés ont ce métier, on envoi un message d'erreur
-        if($nb_employes > 0){
-            $erreur = true;
-            $error_message = "Ce métier est utilisé par un ou plusieurs employés. Il ne peut être supprimé.";
-        }else{ // Sinon on le supprime
+        if(empty($employes_work)){ // Si le métier n'est pas utilisé, on le supprime
             $this->em->remove($metier);
             $this->em->flush();
 
             $erreur = false;
             $error_message = "";
+        }else{ // Sinon on envoi un message d'erreur
+            $erreur = true;
+            $error_message = "Ce métier est utilisé par un ou plusieurs employés. Il ne peut être supprimé.";
         }
 
         return $this->metiers($erreur, $error_message);
@@ -237,6 +239,5 @@ class ListeController extends AbstractController
         }
 
         return $this->projets(0, false, $filteredProjects);
-        //dd($recherche, $projets, $filteredProjects);
     }
 }
